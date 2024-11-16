@@ -7,21 +7,25 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 const loader = new GLTFLoader();
 let object = null; 
 
+const url = './models/velociraptor.glb'; 
+
 loader.load(
-  './models/velociraptor.glb',
+  url,
   function (gltf) {
     object = gltf.scene;
-    object.rotation.y = Math.PI / 2; // Corrected rotation to radians
+    object.rotation.y = 91; 
     scene.add(object);
   },
   function (xhr) {
-    const loaded = (xhr.loaded / xhr.total) * 100;
-    console.log(loaded + '% loaded');
+    const loaded = xhr.loaded; 
+    const total = xhr.total; 
+    console.log((loaded / total * 100) + '% loaded');
   },
   function (error) {
-    console.error("An error occurred while loading the model: " + error);
+    console.error("didn't load" + error);
   }
 );
+
 
 const renderer = new THREE.WebGLRenderer({ alpha: true }); 
 renderer.setSize(window.innerWidth, window.innerHeight);
