@@ -7,22 +7,19 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 const loader = new GLTFLoader();
 let object = null; 
 
-const url = './models/velociraptor.glb'; 
-
 loader.load(
-  url,
+  './models/velociraptor.glb',
   function (gltf) {
     object = gltf.scene;
     object.rotation.y = 91; 
     scene.add(object);
   },
   function (xhr) {
-    const loaded = xhr.loaded; 
-    const total = xhr.total; 
-    console.log((loaded / total * 100) + '% loaded');
+    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
   },
   function (error) {
-    console.error("didn't load" + error);
+
+    console.error("didn't load"+error);
   }
 );
 
@@ -39,52 +36,47 @@ topLight.castShadow = true;
 scene.add(topLight);
 
 const moveSpeed = 0.5; 
-const acceleration = 0.1; 
+const acceleration = 0.5; 
 let moveDirection = new THREE.Vector3(0, 0, 0);
 const targetDirection = new THREE.Vector3(0, 0, 0);
 
 const ambientLight = new THREE.AmbientLight(0x333333, 10);
 scene.add(ambientLight);
 
+
 document.addEventListener('keydown', (event) => {
+  
   if (event.key === 'w') targetDirection.y = 1;
   else if (event.key === 's') targetDirection.y = -1;
+
   else if (event.key === 'a') targetDirection.x = -1;
   else if (event.key === 'd') targetDirection.x = 1;
+  
   else if(event.key == 'q') targetDirection.z = 1; 
   else if(event.key == 'e') targetDirection.z = -1; 
 
   event.preventDefault(); 
 });
-
 document.addEventListener('keyup', (event) => {
   if (event.key === 'w' || event.key === 's') targetDirection.y = 0;
   else if (event.key === 'a' || event.key === 'd') targetDirection.x = 0;
   else if (event.key === 'q' || event.key === 'e') targetDirection.z = 0;
 });
 
-function animateLegs() {
-    if (object) {
-        // Loop through all children of the object to find the legs
-        object.traverse((child) => {
-            // Assuming legs are meshes and not null
-            if (child.isMesh) {
-                // Apply a simple leg animation based on position
-                child.rotation.x = Math.sin(Date.now() * 0.005 + child.uuid) * 0.5;
-            }
-        });
-    }
-}
+
+
 
 function animate() {
   requestAnimationFrame(animate);
 
+    
   moveDirection.lerp(targetDirection.clone().normalize(), acceleration);
+  
+  
   if (moveDirection.length() > 0) {
       object.position.add(moveDirection.clone().multiplyScalar(moveSpeed));
   }
 
-  animateLegs(); // Call the leg animation function
   renderer.render(scene, camera);
 }
 
@@ -93,5 +85,7 @@ window.addEventListener("resize", function () {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+
 
 animate();
