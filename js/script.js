@@ -11,11 +11,12 @@ loader.load(
   './models/velociraptor.glb',
   function (gltf) {
     object = gltf.scene;
-    object.rotation.y = 91; 
+    object.rotation.y = Math.PI / 2; // Corrected rotation to radians
     scene.add(object);
   },
   function (xhr) {
-    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+    const loaded = (xhr.loaded / xhr.total) * 100;
+    console.log(loaded + '% loaded');
   },
   function (error) {
     console.error("An error occurred while loading the model: " + error);
