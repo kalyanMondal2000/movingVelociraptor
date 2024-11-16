@@ -6,39 +6,21 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 
 const loader = new GLTFLoader();
 let object = null; 
-const progressbarElem = document.querySelector('#progressbar');
-
-
-const manager = new THREE.LoadingManager();
-manager.onLoad = init;
-const url = './models/velociraptor.glb'; 
 
 loader.load(
-  url,
+  './models/velociraptor.glb',
   function (gltf) {
     object = gltf.scene;
     object.rotation.y = 91; 
     scene.add(object);
   },
   function (xhr) {
-    const loaded = xhr.loaded; 
-    const total = xhr.total; 
-    manager.onProgress = function (url, loaded, total) {
-        progressbarElem.style.width = `${loaded / total * 100 | 0}%`;
-    };
-    console.log((loaded / total * 100) + '% loaded');
+    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
   },
   function (error) {
-    console.error("didn't load" + error);
+    console.error("An error occurred while loading the model: " + error);
   }
 );
-
-
-function init() {
-    // hide the loading bar
-    const loadingElem = document.querySelector('#loading');
-    loadingElem.remove();
-  }
 
 const renderer = new THREE.WebGLRenderer({ alpha: true }); 
 renderer.setSize(window.innerWidth, window.innerHeight);
