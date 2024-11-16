@@ -1,4 +1,4 @@
-import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
+/*import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
 import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
 
 import SkeletonUtils from 'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/jsm/utils/SkeletonUtils.js';
@@ -136,4 +136,4 @@ window.addEventListener("resize", function () {
 
 
 
-//animate();
+//animate(); */

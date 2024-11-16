@@ -3,11 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/styles.css">
-    <title>Velociraptor Animation</title>
+    <title>Three.js 3D Model Movement with WASD</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+    </style>
 </head>
 <body>
-    <div id="container3D"></div>
-    <script type="module" src="./js/script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/loaders/GLTFLoader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/animation/AnimationMixer.js"></script>
+    <script>
+
+        // Set up the scene, camera, and renderer
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Define the model and its mixer for animation
+        let model, mixer;
+
+        // Camera setup
+        camera.position.z = 5;
+
+        // Movement variables
+        const speed = 0.1; // Controls the speed of movement
+        let moveForward = false;
+        let moveBackward = false;
+        let moveLeft = false;
+        let moveRight = false;
+
+        // Set up the GLTFLoader and load the 3D model
+        const loader = new THREE.GLTFLoader();
+        function loadModel(url) {
+            loader.load(url, (gltf) => {
+                model = gltf.scene;
+                scene.add(model);
+                
+                // Set up animation mixer (if there are animations in the model)
+                if (gltf.animations.length > 0) {
+                    mixer = new THREE.AnimationMixer(model);
+                    gltf.animations.forEach((clip) => {
+                        mixer.clipAction(clip).play();
+                    });
+                }
+            }, undefined, (error) => {
+                console.error(error);
+            });
+        }
+
+        // Set up event listeners for WASD key input
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'w') moveForward = true;
+            if (event.key === 's') moveBackward = true;
+            if (event.key === 'a') moveLeft = true;
+            if (event.key === 'd') moveRight = true;
+        });
+
+        window.addEventListener('keyup', (event) => {
+            if (event.key === 'w') moveForward = false;
+            if (event.key === 's') moveBackward = false;
+            if (event.key === 'a') moveLeft = false;
+            if (event.key === 'd') moveRight = false;
+        });
+
+        // Function to update the model position
+        function updateModelPosition() {
+            if (model) {
+                const velocity = new THREE.Vector3();
+
+                if (moveForward) velocity.z -= speed;
+                if (moveBackward) velocity.z += speed;
+                if (moveLeft) velocity.x -= speed;
+                if (moveRight) velocity.x += speed;
+
+                model.position.add(velocity);
+            }
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (mixer) {
+                mixer.update(0.01); // Update the animation mixer
+            }
+
+            updateModelPosition();
+            renderer.render(scene, camera);
+        }
+
+        // Load a model from a URL (replace this with your model's URL)
+        loadModel('./models/velociraptor.glb'); // Make sure the model is in .glb format
+
+        // Start the animation loop
+        animate();
+
+        // Resize handling
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        });
+
+    </script>
 </body>
 </html>
