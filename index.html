@@ -36,7 +36,7 @@
         let moveRight = false;
 
         // Set up the GLTFLoader and load the 3D model
-        const loader = new THREE.GLTFLoader();
+        const loader = new GLTFLoader();
         function loadModel(url) {
             loader.load(url, (gltf) => {
                 model = gltf.scene;
