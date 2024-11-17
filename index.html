@@ -26,8 +26,14 @@
         let model, mixer;
 
         // Camera setup
-        camera.position.z = 5;
+        camera.position.z = 10;
 
+
+
+        const topLight = new THREE.DirectionalLight(0xffffff, 10); 
+        topLight.position.set(500, 500, 500);
+        topLight.castShadow = true;
+        scene.add(topLight);
         // Movement variables
         const speed = 0.1; // Controls the speed of movement
         let moveForward = false;
