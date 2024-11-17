@@ -30,7 +30,7 @@
         const camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 1000);
         camera.position.y = 20;
         camera.rotation.x = -30 * THREE.Math.DEG2RAD;
-        scene.background = new THREE.Color("#00BFFF");
+        scene.background = new THREE.TextureLoader().load('mountain.jpg');
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
@@ -87,7 +87,7 @@
         loadVelociraptor('./models/T-Rex.glb'); 
 
 
-        const geometry = new THREE.BoxGeometry(5000, 1, 500); 
+        const geometry = new THREE.BoxGeometry(5000, 1, 5000); 
 
         const material = new THREE.MeshBasicMaterial({color: "#C57738"});
         const road = new THREE.Mesh( geometry, material ); 
