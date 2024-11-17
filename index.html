@@ -30,7 +30,7 @@
 
 
 
-        const topLight = new THREE.DirectionalLight(0xffffff, 10); 
+        const topLight = new THREE.DirectionalLight(0xffffff, 15); 
         topLight.position.set(500, 500, 500);
         topLight.castShadow = true;
         scene.add(topLight);
@@ -91,12 +91,15 @@
             }
         }
 
+
+        const rest = 0; 
+        const sprint = 0.05; 
         // Animation loop
         function animate() {
             requestAnimationFrame(animate);
 
             if (mixer) {
-                mixer.update(0.01); // Update the animation mixer
+                mixer.update(sprint); // Update the animation mixer
             }
 
             updateModelPosition();
