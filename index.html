@@ -26,7 +26,7 @@
         let model, mixer;
 
         // Camera setup
-        camera.position.z = 10;
+        camera.position.z = 25;
 
 
 
@@ -35,7 +35,7 @@
         topLight.castShadow = true;
         scene.add(topLight);
         // Movement variables
-        const speed = 0.1; // Controls the speed of movement
+        const speed = 1; // Controls the speed of movement
         let moveForward = false;
         let moveBackward = false;
         let moveLeft = false;
@@ -47,7 +47,9 @@
             loader.load(url, (gltf) => {
                 model = gltf.scene;
                 scene.add(model);
-                
+                model.rotation.y = 8; 
+                model.position.y = -5;
+                model.position.x = -4;
                 // Set up animation mixer (if there are animations in the model)
                 if (gltf.animations.length > 0) {
                     mixer = new THREE.AnimationMixer(model);
