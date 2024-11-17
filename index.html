@@ -18,7 +18,6 @@
             left: 0;
             width: 100%;
             height: 50%; /* This will cover the top half of the screen */
-            background-image: url('mountain.jpg');
             background-size: cover;
             background-position: center;
             z-index: -1; /* Ensure it's behind the model and canvas */
@@ -42,19 +41,17 @@
         import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
         import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
 
-        // Set up the scene, camera, and renderer
-        const imgLoader = new THREE.TextureLoader()
         const scene = new THREE.Scene();
-        scene.background = imgLoader.load('mountain.jpg'); 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        scene.background = new THREE.Color("blue");
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        // Define the model and its mixer for animation
+        
         let model, mixer;
 
-        // Camera setup
+        
         camera.position.z = 15;
 
         const topLight = new THREE.DirectionalLight('white', 25); 
@@ -71,7 +68,7 @@
 
         // Set up the GLTFLoader and load the 3D model
         const loader = new GLTFLoader();
-        function loadModel(url) {
+        function loadVelociraptor(url) {
             loader.load(url, (gltf) => {
                 model = gltf.scene;
                 scene.add(model);
@@ -89,7 +86,6 @@
                 console.error(error);
             });
         }
-
         // Set up event listeners for WASD key input
         window.addEventListener('keydown', (event) => {
             if (event.key === 'a') moveLeft = true;
@@ -130,8 +126,18 @@
         }
 
         // Load a model from a URL (replace this with your model's URL)
-        loadModel('./models/velociraptor.glb'); // Make sure the model is in .glb format
+        loadVelociraptor('./models/velociraptor.glb'); // Make sure the model is in .glb format
+        loader.load("./models/road.glb", (gltf) => {
+                model = gltf.scene;
+                scene.add(model);
+                model.rotation.y = 7.9; 
+                model.rotation.x = 0;
+                model.position.y = -11;
+                model.position.x = 0;
+                gltf.scene.scale.set(100, 0.5, 0.3);
+        }
 
+        )
         // Start the animation loop
         animate();
 
