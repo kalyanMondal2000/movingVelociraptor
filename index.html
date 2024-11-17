@@ -85,29 +85,9 @@
             });
         }
         // Set up event listeners for WASD key input
-        window.addEventListener('keydown', (event) => {
-            if (event.key === 'a') moveLeft = true;
-            if (event.key === 'd') moveRight = true;
-        });
-
-        window.addEventListener('keyup', (event) => {
-            if (event.key === 'a') moveLeft = false;
-            if (event.key === 'd') moveRight = false;
-        });
+        
 
         // Function to update the model position
-        function updateModelPosition() {
-            if (model) {
-                const velocity = new THREE.Vector3();
-
-                if (moveForward) velocity.z -= speed;
-                if (moveBackward) velocity.z += speed;
-                if (moveLeft) velocity.x -= speed;
-                if (moveRight) velocity.x += speed;
-
-                model.position.add(velocity);
-            }
-        }
 
         const rest = 0; 
         const sprint = 0.08; 
