@@ -4,25 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Three.js 3D Model Movement with WASD</title>
-    <style>
-        body { 
-            margin: 0; 
-            overflow: hidden;
-            height: 100%;
-            background-color: #71BC78; /* Default background color for the lower part */
-            
-        }
 
-
-
-        canvas { 
-            display: block; 
-            position: absolute; /* Makes sure the canvas takes the full screen */
-            top: 0;
-            left: 0;
-            z-index: 0; /* Canvas should be below the background image */
-        }
-    </style>
 </head>
 
 <body>
@@ -53,14 +35,13 @@
         topLight.castShadow = true;
         scene.add(topLight);
 
-        // Movement variables
+
         const speed = 1;
         let moveForward = false;
         let moveBackward = false;
         let moveLeft = false;
         let moveRight = false;
 
-        // Set up the GLTFLoader and load the 3D model
         const loader = new GLTFLoader();
         function loadVelociraptor(url) {
             loader.load(url, (gltf) => {
@@ -84,36 +65,36 @@
                 console.error(error);
             });
         }
-        // Set up event listeners for WASD key input
-        
 
-        // Function to update the model position
+        function updateModelPosition() {
+            if (model) {
+                const velocity = new THREE.Vector3();
+
+                if (moveForward) velocity.z -= speed;
+                if (moveBackward) velocity.z += speed;
+                if (moveLeft) velocity.x -= speed;
+                if (moveRight) velocity.x += speed;
+
+                model.position.add(velocity);
+            }
+        }
 
         const rest = 0; 
         const sprint = 0.08; 
-        // Animation loop
+
         function animate() {
             requestAnimationFrame(animate);
 
             if (mixer) {
-                mixer.update(sprint); // Update the animation mixer
+                mixer.update(sprint); 
             }
-
-            updateModelPosition();
             renderer.render(scene, camera);
         }
-
-        // Load a model from a URL (replace this with your model's URL)
-        loadVelociraptor('./models/T-Rex.glb'); // Make sure the model is in .glb format
+        loadVelociraptor('./models/T-Rex.glb'); 
 
 
         const geometry = new THREE.BoxGeometry(250, 1, 400); 
-        /*
-        const texture = new THREE.TextureLoader().load( "./models/sand.jpg" );
-        texture.wrapS = THREE.RepeatWrapping;
-        texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set( 15, 10);
-        */
+
         const material = new THREE.MeshBasicMaterial({color: "#C57738"});
         const road = new THREE.Mesh( geometry, material ); 
         scene.add(road)
@@ -123,10 +104,10 @@
         road.position.x = 0;
 
 
-        // Start the animation loop
+
         animate();
 
-        // Resize handling
+
         window.addEventListener('resize', () => {
             renderer.setSize(window.innerWidth, window.innerHeight);
             camera.aspect = window.innerWidth / window.innerHeight;
