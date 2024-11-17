@@ -12,25 +12,23 @@
 
     <script type="module" src="https://cdn.skypack.dev/three@0.129.0/src/animation/AnimationClip.js"></script>
     <script type="module">
+
+        //imports
         import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
         import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
 
+        //initializing variables
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 1000);
         camera.position.y = 20;
         camera.rotation.x = -30 * THREE.Math.DEG2RAD;
-        scene.background = new THREE.Color("blue");
+        scene.background = new THREE.Color("#00BFFF");
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
-
-        
         let model, mixer;
-
-        
         camera.position.z = 15;
-
-        const topLight = new THREE.DirectionalLight('white', 10); 
+        const topLight = new THREE.DirectionalLight('white', 5); 
         topLight.position.set(500, 500, 500);
         topLight.castShadow = true;
         scene.add(topLight);
@@ -54,7 +52,7 @@
                 model.position.z = -3;
 
                 model.scale.set(0.75, 0.75, 0.75); 
-                // Set up animation mixer (if there are animations in the model)
+                
                 if (gltf.animations.length > 0) {
                     mixer = new THREE.AnimationMixer(model);
                     gltf.animations.forEach((clip) => {
@@ -81,7 +79,7 @@
         loadVelociraptor('./models/T-Rex.glb'); 
 
 
-        const geometry = new THREE.BoxGeometry(250, 1, 400); 
+        const geometry = new THREE.BoxGeometry(5000, 1, 500); 
 
         const material = new THREE.MeshBasicMaterial({color: "#C57738"});
         const road = new THREE.Mesh( geometry, material ); 
