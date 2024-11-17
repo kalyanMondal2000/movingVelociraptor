@@ -101,6 +101,10 @@
 
         //initializing texture loader
         let textureLoader = new THREE.TextureLoader();
+
+        //defining textures
+        let hillTexture = loader.load('./models/desertMountain/Textures/T_Mountains_desert.png');
+        let bushTexture = loader.load('./models/desertplants/Textures/T_Desert_plants.png');
         //load horizon
 
         const loadHorizon = () =>{
