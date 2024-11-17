@@ -24,7 +24,7 @@
         //imports
         import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
         import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
-
+        import { FBXLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/FBXLoader.js"
         //initializing variables
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 1000);
@@ -36,7 +36,7 @@
         document.body.appendChild(renderer.domElement);
         let model, mixer;
         camera.position.z = 15;
-        const topLight = new THREE.DirectionalLight('white', 5); 
+        const topLight = new THREE.DirectionalLight('white', 10); 
         topLight.position.set(500, 500, 500);
         topLight.castShadow = true;
         scene.add(topLight);
@@ -47,9 +47,9 @@
         let moveBackward = false;
         let moveLeft = false;
         let moveRight = false;
-
+        //loading dinosaur
         const loader = new GLTFLoader();
-        function loadVelociraptor(url) {
+        function loadDino(url) {
             loader.load(url, (gltf) => {
                 model = gltf.scene;
                 scene.add(model);
@@ -71,11 +71,11 @@
                 console.error(error);
             });
         }
-
-
+        loadDino('./models/T-Rex.glb'); 
+        //variables for animation speed
         const rest = 0; 
         const sprint = 0.08; 
-
+        //animate the dino
         function animate() {
             requestAnimationFrame(animate);
 
@@ -84,9 +84,10 @@
             }
             renderer.render(scene, camera);
         }
-        loadVelociraptor('./models/T-Rex.glb'); 
 
+        
 
+        //making ground
         const geometry = new THREE.BoxGeometry(5000, 1, 5000); 
 
         const material = new THREE.MeshBasicMaterial({color: "#C57738"});
@@ -98,10 +99,40 @@
         road.position.x = 0;
 
 
+        //initializing texture loader
+        let textureLoader = new THREE.TextureLoader();
+        //load horizon
 
+        const loadHorizon = () =>{
+            const fbxLoader = new FBXLoader()
+            fbxLoader.load("./models/desertMountain/Fbx/Plateau_desert_001.fbx", (mountain)=>{
+                scene.add(mountain);
+                mountain.position.y = -5; 
+                mountain.position.x = -1; 
+                mountain.position.z = -100; 
+                mountain.scale.set(0.01, 0.01, 0.01);
+                
+            })
+        }
+        //load plants
+        const loadBushes = () =>{
+            const fbxLoader = new FBXLoader()
+            fbxLoader.load("./models/desertplants/Fbx/Desert_plant_001.fbx", (bush)=>{
+                scene.add(bush);
+                bush.position.y = -5; 
+                bush.position.x = 15; 
+                bush.position.z = 0; 
+                bush.scale.set(0.1, 0.1, 0.1);
+                
+            })
+        }
+
+
+        loadHorizon();
+        loadBushes();
         animate();
 
-
+        //resizing window
         window.addEventListener('resize', () => {
             renderer.setSize(window.innerWidth, window.innerHeight);
             camera.aspect = window.innerWidth / window.innerHeight;
