@@ -66,18 +66,6 @@
             });
         }
 
-        function updateModelPosition() {
-            if (model) {
-                const velocity = new THREE.Vector3();
-
-                if (moveForward) velocity.z -= speed;
-                if (moveBackward) velocity.z += speed;
-                if (moveLeft) velocity.x -= speed;
-                if (moveRight) velocity.x += speed;
-
-                model.position.add(velocity);
-            }
-        }
 
         const rest = 0; 
         const sprint = 0.08; 
