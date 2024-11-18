@@ -32,7 +32,7 @@
         const camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 1000);
         camera.position.y = 20;
         camera.rotation.x = -30 * THREE.Math.DEG2RAD;
-        scene.background = new THREE.Color("red");
+        scene.background = new THREE.Color('#002244');
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
@@ -57,7 +57,7 @@
                 scene.add(model);
                 model.rotation.y = 9.5; 
                 model.rotation.z = 6.4;
-                model.position.y = -5;
+                model.position.y = -10;
                 model.position.x = -1;
                 model.position.z = -3;
 
@@ -82,7 +82,7 @@
             requestAnimationFrame(animate);
 
             if (mixer) {
-                mixer.update(sprint); 
+                mixer.update(rest); 
             }
             renderer.render(scene, camera);
         }
@@ -90,7 +90,7 @@
         
 
         //making ground
-        const geometry = new THREE.BoxGeometry(5000, 1, 5000); 
+        const geometry = new THREE.BoxGeometry(5000, 1, 50000); 
 
         const material = new THREE.MeshBasicMaterial({color: "#C57738"});
         const road = new THREE.Mesh( geometry, material ); 
@@ -111,7 +111,7 @@
                 mountain.position.y = -10; 
                 mountain.position.x = Math.random() * (2000 + 2000) -2000; 
                 mountain.position.z = -1100; 
-                mountain.scale.set(0.03, 0.03, 0.03);
+                mountain.scale.set(0.01, 0.01, 0.01);
 
                 let hillTexture = textureLoader.load('./models/desertMountain/Textures/T_Mountains_desert.png');
                 const hillMaterial = new THREE.MeshPhongMaterial({map: hillTexture});
@@ -127,11 +127,11 @@
         //load plants
         const loadBushes = () =>{
             const fbxLoader = new FBXLoader()
-            fbxLoader.load("./models/desertplants/Fbx/Desert_plant_001.fbx", (bush)=>{
+            fbxLoader.load("./models/desertplants/Fbx/Desert_plant_004.fbx", (bush)=>{
                 scene.add(bush);
-                bush.position.y = -5; 
+                bush.position.y = -10; 
                 bush.position.x = 15; 
-                bush.position.z = 0; 
+                bush.position.z = -10; 
                 bush.scale.set(0.1, 0.1, 0.1);
 
                 let bushTexture = textureLoader.load('./models/desertplants/Textures/T_Desert_plants.png');
@@ -172,14 +172,14 @@
             'models/desertMountain/Fbx/Plateau_desert_005.fbx'
         ]
         const shuffled = mtnFiles.sort(() => 0.5 - Math.random()); 
-        const selectedFiles = shuffled.slice(0, 1000); 
+        const selectedFiles = shuffled.slice(0, 20); 
         for(let x=0; x<selectedFiles.length; x++){
             loadHorizon(selectedFiles[x]);
         }
         
 
 
-        loadBushes();
+        
         animate();
 
         //resizing window
