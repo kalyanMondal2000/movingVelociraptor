@@ -111,7 +111,7 @@
                 mountain.position.y = -10; 
                 mountain.position.x = Math.random() * (2000 + 2000) -2000; 
                 mountain.position.z = -1100; 
-                mountain.scale.set(0.01, 0.01, 0.01);
+                mountain.scale.set(0.02, 0.02, 0.02);
 
                 let hillTexture = textureLoader.load('./models/desertMountain/Textures/T_Mountains_desert.png');
                 const hillMaterial = new THREE.MeshPhongMaterial({map: hillTexture});
@@ -171,10 +171,8 @@
             'models/desertMountain/Fbx/Plateau_desert_004.fbx',
             'models/desertMountain/Fbx/Plateau_desert_005.fbx'
         ]
-        const shuffled = mtnFiles.sort(() => 0.5 - Math.random()); 
-        const selectedFiles = shuffled.slice(0, 20); 
-        for(let x=0; x<selectedFiles.length; x++){
-            loadHorizon(selectedFiles[x]);
+        for(let x=0; x<mtnFiles.length; x++){
+            for(let i = 0; i<3;i++){loadHorizon(mtnFiles[x]);}  
         }
         
 
