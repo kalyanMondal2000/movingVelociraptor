@@ -2,31 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Three.js 3D Model Movement with WASD</title>
-
+    <meta name="viewport" content="width=device-width, user-scalable=yes">
+    <title>T-Rex Game</title>
 </head>
 
 <style>
     body {
-      margin: 0;
+        margin: 0;
     }
-    </style>
-
-
+</style>
 
 <body>
-   
-
     <script type="module" src="https://cdn.skypack.dev/three@0.129.0/src/animation/AnimationClip.js"></script>
     <script type="module">
 
         //imports
         import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
         import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
-        import { FBXLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/FBXLoader.js"
-        import { OBJLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/OBJLoader.js";
-
+        import { FBXLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/FBXLoader.js";
+        
         //initializing variables
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 1000);
@@ -42,29 +36,24 @@
         topLight.position.set(500, 500, 500);
         topLight.castShadow = true;
         scene.add(topLight);
+        var dino;
 
-
-        const speed = 1;
-        let moveForward = false;
-        let moveBackward = false;
-        let moveLeft = false;
-        let moveRight = false;
         //loading dinosaur
         const loader = new GLTFLoader();
         function loadDino(url) {
             loader.load(url, (gltf) => {
-                model = gltf.scene;
-                scene.add(model);
-                model.rotation.y = 9.5; 
-                model.rotation.z = 6.4;
-                model.position.y = -10;
-                model.position.x = -1;
-                model.position.z = -3;
+                dino = gltf.scene;
+                scene.add(dino);
+                dino.rotation.y = 9.5; 
+                dino.rotation.z = 6.4;
+                dino.position.y = -10;
+                dino.position.x = -1;
+                dino.position.z = -3;
 
-                model.scale.set(0.75, 0.75, 0.75); 
-                
+                dino.scale.set(0.75, 0.75, 0.75); 
+
                 if (gltf.animations.length > 0) {
-                    mixer = new THREE.AnimationMixer(model);
+                    mixer = new THREE.AnimationMixer(dino);
                     gltf.animations.forEach((clip) => {
                         mixer.clipAction(clip).play();
                     });
@@ -73,81 +62,101 @@
                 console.error(error);
             });
         }
+
         loadDino('./models/T-Rex.glb'); 
+
+        let moveInProgress = false;
+
+        document.addEventListener('keydown', (event) => {
+            if (moveInProgress) return;  // Prevent movement while an action is in progress
+
+            if (event.key === 'a') {
+                // Rotate left
+                dino.rotation.y = 10;
+                moveInProgress = true;
+
+                setTimeout(() => {
+                    // Pause before moving
+                    dino.position.x -= 10;
+
+                    // Reset rotation after move
+                    setTimeout(() => {
+                        dino.rotation.y = 9.5; // Straighten out
+                        moveInProgress = false;
+                    }, 50); 
+                }, 50); 
+            }
+
+            if (event.key === 'd') {
+                // Rotate right
+                dino.rotation.y = 9;
+                moveInProgress = true;
+
+                setTimeout(() => {
+                    // Pause before moving
+                    dino.position.x += 10;
+
+                    // Reset rotation after move
+                    setTimeout(() => {
+                        dino.rotation.y = 9.5; // Straighten out
+                        moveInProgress = false;
+                    }, 50); 
+                }, 50); 
+            }
+
+            event.preventDefault(); 
+        });
+
         //variables for animation speed
         const rest = 0; 
         const sprint = 0.08; 
+
         //animate the dino
         function animate() {
             requestAnimationFrame(animate);
 
             if (mixer) {
-                mixer.update(rest); 
+                mixer.update(sprint); 
             }
             renderer.render(scene, camera);
         }
 
-        
-
         //making ground
         const geometry = new THREE.BoxGeometry(5000, 1, 50000); 
-
         const material = new THREE.MeshBasicMaterial({color: "#C57738"});
-        const road = new THREE.Mesh( geometry, material ); 
-        scene.add(road)
+        const road = new THREE.Mesh(geometry, material); 
+        scene.add(road);
         road.rotation.y = 7.888; 
         road.rotation.x = 0;
         road.position.y = -9.5;
         road.position.x = 0;
 
-
         //initializing texture and obj loader
         let textureLoader = new THREE.TextureLoader();
-        let objLoader = new OBJLoader();
-        const loadHorizon = (mtnUrl) =>{
-            const fbxLoader = new FBXLoader()
-            fbxLoader.load(mtnUrl, (mountain)=>{
+ 
+        const loadEnvironment = (mtnUrl) => {
+            const fbxLoader = new FBXLoader();
+            fbxLoader.load(mtnUrl, (mountain) => {
                 scene.add(mountain);
                 mountain.position.y = -10; 
-                mountain.position.x = Math.random() * (2000 + 2000) -2000; 
-                mountain.position.z = -1100; 
+                let randX;
+                do{
+                    randX = Math.random() * (1000 + 1000) - 1000; 
+                }while (randX >= -100 && randX <= 100);
+                mountain.position.x = randX;
+                mountain.position.z = Math.random() * (-1000 + 100) - 100;
                 mountain.scale.set(0.02, 0.02, 0.02);
 
                 let hillTexture = textureLoader.load('./models/desertMountain/Textures/T_Mountains_desert.png');
                 const hillMaterial = new THREE.MeshPhongMaterial({map: hillTexture});
 
-                
-                mountain.traverse( child => {
-                    if (child.isMesh){
+                mountain.traverse(child => {
+                    if (child.isMesh) {
                         child.material = hillMaterial;
                     }
-                    })  
-                   
-             })}
-        //load plants
-        const loadBushes = () =>{
-            const fbxLoader = new FBXLoader()
-            fbxLoader.load("./models/desertplants/Fbx/Desert_plant_004.fbx", (bush)=>{
-                scene.add(bush);
-                bush.position.y = -10; 
-                bush.position.x = 15; 
-                bush.position.z = -10; 
-                bush.scale.set(0.1, 0.1, 0.1);
-
-                let bushTexture = textureLoader.load('./models/desertplants/Textures/T_Desert_plants.png');
-
-       
-                const bushMaterial = new THREE.MeshPhongMaterial({
-                    map: bushTexture
                 });
-
-                bush.traverse( child => {
-                    if (child.isMesh){
-                        child.material = bushMaterial;
-                    }
-                    })  
-            })  
-     }
+            });
+        };
 
         const mtnFiles = [
             'models/desertMountain/Fbx/Hill_desert_001.fbx',
@@ -155,29 +164,27 @@
             'models/desertMountain/Fbx/Hill_desert_003.fbx',
             'models/desertMountain/Fbx/Hill_desert_004.fbx',
             'models/desertMountain/Fbx/Hill_desert_005.fbx',
-           'models/desertMountain/Fbx/Mountain_desert_001.fbx',
+            'models/desertMountain/Fbx/Mountain_desert_001.fbx',
             'models/desertMountain/Fbx/Mountain_desert_002.fbx',
             'models/desertMountain/Fbx/Mountain_desert_003.fbx',
             'models/desertMountain/Fbx/Mountain_desert_004.fbx',
             'models/desertMountain/Fbx/Mountain_desert_005.fbx',
-           'models/desertMountain/Fbx/Mountain_desert_006.fbx',
+            'models/desertMountain/Fbx/Mountain_desert_006.fbx',
             'models/desertMountain/Fbx/Mountain_desert_007.fbx',
             'models/desertMountain/Fbx/Mountain_desert_008.fbx',
             'models/desertMountain/Fbx/Mountain_desert_009.fbx',
             'models/desertMountain/Fbx/Mountain_desert_010.fbx',
             'models/desertMountain/Fbx/Plateau_desert_001.fbx',
             'models/desertMountain/Fbx/Plateau_desert_002.fbx',
-           'models/desertMountain/Fbx/Plateau_desert_003.fbx',
+            'models/desertMountain/Fbx/Plateau_desert_003.fbx',
             'models/desertMountain/Fbx/Plateau_desert_004.fbx',
             'models/desertMountain/Fbx/Plateau_desert_005.fbx'
-        ]
-        for(let x=0; x<mtnFiles.length; x++){
-            for(let i = 0; i<3;i++){loadHorizon(mtnFiles[x]);}  
+        ];
+        for (let x = 0; x < mtnFiles.length; x++) {
+            for (let i = 0; i < 3; i++) {
+                loadEnvironment(mtnFiles[x]);
+            }
         }
-        
-
-
-        
         animate();
 
         //resizing window
