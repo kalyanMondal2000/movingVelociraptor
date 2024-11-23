@@ -4,24 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=yes">
     <title>T-Rex Game</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #loading-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%;
+            height: 25px;
+            background-color: #333;
+        }
+
+        #loading-bar {
+            width: 0%;
+            height: 100%;
+            background-color: red;
+            font-size: larger;
+            text-align: center;
+        }
+    </style>
 </head>
 
-<style>
-    body {
-        margin: 0;
-    }
-</style>
-
 <body>
-    <script type="module" src="https://cdn.skypack.dev/three@0.129.0/src/animation/AnimationClip.js"></script>
-    <script type="module">
+    <!-- Loading Bar HTML -->
+    <div id="loading-container">
+        <div id="loading-bar">Loading</div>
+    </div>
 
-        //imports
+    <script type="module">
+        // Imports
         import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
         import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
         import { FBXLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/FBXLoader.js";
-        
-        //initializing variables
+
+        // Initializing variables
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 1000);
         camera.position.y = 20;
@@ -38,33 +58,195 @@
         scene.add(topLight);
         var dino;
 
-        //loading dinosaur
+        function updateLoadingBar(progress) {
+            const loadingBar = document.getElementById('loading-bar');
+            loadingBar.style.width = progress + '%';
+        }
+
+
+        function hideLoadingBar() {
+            const loadingContainer = document.getElementById('loading-container');
+            loadingContainer.style.visibility = 'hidden';
+        }
+
+        function checkLoadingComplete() {
+            if (loadedModels === totalModels) {
+                hideLoadingBar();
+            }
+        }
+
+        let totalModels = 0;
+        let loadedModels = 0;
+
+
+        // Loading dinosaur
         const loader = new GLTFLoader();
+        
         function loadDino(url) {
-            loader.load(url, (gltf) => {
-                dino = gltf.scene;
-                scene.add(dino);
-                dino.rotation.y = 9.5; 
-                dino.rotation.z = 6.4;
-                dino.position.y = -10;
-                dino.position.x = -1;
-                dino.position.z = -3;
+            totalModels++;
+            loader.load(url, 
+                (gltf) => {
+                    dino = gltf.scene;
+                    scene.add(dino);
+                    dino.rotation.y = 9.5; 
+                    dino.rotation.z = 6.4;
+                    dino.position.y = -10;
+                    dino.position.x = -1;
+                    dino.position.z = -3;
 
-                dino.scale.set(0.75, 0.75, 0.75); 
+                    dino.scale.set(0.75, 0.75, 0.75); 
 
-                if (gltf.animations.length > 0) {
-                    mixer = new THREE.AnimationMixer(dino);
-                    gltf.animations.forEach((clip) => {
-                        mixer.clipAction(clip).play();
-                    });
+                    if (gltf.animations.length > 0) {
+                        mixer = new THREE.AnimationMixer(dino);
+                        gltf.animations.forEach((clip) => {
+                            mixer.clipAction(clip).play();
+                        });
+                    }
+
+                    loadedModels++;
+                    checkLoadingComplete();
+                },
+                (xhr) => {
+                    // Update the loading bar as a percentage of the total file size loaded
+                    const progress = (xhr.loaded / xhr.total) * 100;
+                    updateLoadingBar(progress);
+                },
+                (error) => {
+                    console.error(error);
+                    loadedModels++;
+                    checkLoadingComplete();
                 }
-            }, undefined, (error) => {
-                console.error(error);
-            });
+            );
         }
 
         loadDino('./models/T-Rex.glb'); 
 
+
+        // Making ground
+        const geometry = new THREE.BoxGeometry(5000, 1, 50000); 
+        const material = new THREE.MeshBasicMaterial({color: "#C57738"});
+        const road = new THREE.Mesh(geometry, material); 
+        scene.add(road);
+        road.rotation.y = 7.888; 
+        road.rotation.x = 0;
+        road.position.y = -9.5;
+        road.position.x = 0;
+
+        // Initializing texture and obj loader
+        let textureLoader = new THREE.TextureLoader();
+        let fbxLoader = new FBXLoader();
+        const loadEnvironment = (mtnUrl) => {
+            totalModels++;
+            fbxLoader.load(mtnUrl, (mountain) => {
+                scene.add(mountain);
+                mountain.position.y = -10; 
+                let randX;
+                do{
+                    randX = Math.random() * (1000 + 1000) - 1000; 
+                }while (randX >= -200 && randX <= 200);
+                mountain.position.x = randX;
+                mountain.position.z = Math.random() * (-1000 + 100) - 100;
+                mountain.scale.set(0.05, 0.05, 0.05);
+
+                let hillTexture = textureLoader.load('./models/desertMountain/Textures/T_Mountains_desert.png');
+                const hillMaterial = new THREE.MeshPhongMaterial({map: hillTexture});
+
+                mountain.traverse(child => {
+                    if (child.isMesh) {
+                        child.material = hillMaterial;
+                    }
+                });
+
+                loadedModels++;
+                checkLoadingComplete();
+            });
+        };
+
+        const mtnFiles = [
+            'models/desertMountain/Fbx/Hill_desert_001.fbx',
+            'models/desertMountain/Fbx/Hill_desert_002.fbx',
+            'models/desertMountain/Fbx/Hill_desert_003.fbx',
+            'models/desertMountain/Fbx/Hill_desert_004.fbx',
+            'models/desertMountain/Fbx/Hill_desert_005.fbx',
+            'models/desertMountain/Fbx/Mountain_desert_001.fbx',
+            'models/desertMountain/Fbx/Mountain_desert_002.fbx',
+            'models/desertMountain/Fbx/Mountain_desert_003.fbx',
+            'models/desertMountain/Fbx/Mountain_desert_004.fbx',
+            'models/desertMountain/Fbx/Mountain_desert_005.fbx',
+            'models/desertMountain/Fbx/Mountain_desert_006.fbx',
+            'models/desertMountain/Fbx/Mountain_desert_007.fbx',
+            'models/desertMountain/Fbx/Mountain_desert_008.fbx',
+            'models/desertMountain/Fbx/Mountain_desert_009.fbx',
+            'models/desertMountain/Fbx/Mountain_desert_010.fbx',
+            'models/desertMountain/Fbx/Plateau_desert_001.fbx',
+            'models/desertMountain/Fbx/Plateau_desert_002.fbx',
+            'models/desertMountain/Fbx/Plateau_desert_003.fbx',
+            'models/desertMountain/Fbx/Plateau_desert_004.fbx',
+            'models/desertMountain/Fbx/Plateau_desert_005.fbx'];
+
+        for (let x = 0; x < mtnFiles.length; x++) {
+            for (let i = 0; i < 1; i++) {
+                loadEnvironment(mtnFiles[x]);
+            }
+        }
+
+        const loadBushes = (bushUrl)=>{
+            fbxLoader.load(bushUrl, (bush)=>{
+                scene.add(bush);
+                bush.position.y = -15; 
+                let bushX; 
+                do{
+                    bushX = Math.random() * (1000 + 1000) - 1000; 
+                }while(bushX >= -200 && bushX <= 200);
+                bush.position.x = bushX; 
+                bush.position.z = Math.random()*(-1000 + 100) - 100;
+                bush.scale.set(0.25,0.25,0.25);
+
+                let bushTexture = textureLoader.load('./models/desertplants/Textures/T_Desert_plants.png');
+                const bushMaterial = new THREE.MeshPhongMaterial({map: bushTexture});
+
+                bush.traverse(child => {
+                    if (child.isMesh) {
+                        child.material = bushMaterial;
+                    }
+                });
+            })
+        }
+
+        const bushFiles = [
+            "./models/desertplants/Fbx/Desert_plant_001.fbx",
+            "./models/desertplants/Fbx/Desert_plant_002.fbx",
+            "./models/desertplants/Fbx/Desert_plant_003.fbx",
+            "./models/desertplants/Fbx/Desert_plant_004.fbx",
+            "./models/desertplants/Fbx/Desert_plant_005.fbx",
+            "./models/desertplants/Fbx/Desert_plant_006.fbx",
+            "./models/desertplants/Fbx/Desert_plant_007.fbx",
+            "./models/desertplants/Fbx/Desert_plant_008.fbx",
+            "./models/desertplants/Fbx/Desert_plant_009.fbx",
+            "./models/desertplants/Fbx/Desert_plant_010.fbx",
+            "./models/desertplants/Fbx/Desert_plant_011.fbx",
+            "./models/desertplants/Fbx/Desert_plant_012.fbx",
+            "./models/desertplants/Fbx/Desert_plant_013.fbx",
+            "./models/desertplants/Fbx/Desert_plant_014.fbx",
+            "./models/desertplants/Fbx/Desert_plant_015.fbx",
+            "./models/desertplants/Fbx/Desert_plant_016.fbx",
+            "./models/desertplants/Fbx/Desert_plant_017.fbx",
+            "./models/desertplants/Fbx/Desert_plant_018.fbx",
+            "./models/desertplants/Fbx/Desert_plant_019.fbx",
+            "./models/desertplants/Fbx/Desert_plant_020.fbx",];
+
+        for (let x = 0; x < bushFiles.length; x++) {
+            for (let i = 0; i < 6; i++) {
+                loadBushes(bushFiles[x]);
+            }
+        }
+
+        //player movement
+
+
+
+
+        
         let moveInProgress = false;
 
         document.addEventListener('keydown', (event) => {
@@ -107,87 +289,23 @@
             event.preventDefault(); 
         });
 
-        //variables for animation speed
+        // Variables for animation speed
         const rest = 0; 
         const sprint = 0.08; 
 
-        //animate the dino
+        // Animate the dino
         function animate() {
             requestAnimationFrame(animate);
 
             if (mixer) {
-                mixer.update(sprint); 
+                mixer.update(rest); 
             }
             renderer.render(scene, camera);
         }
 
-        //making ground
-        const geometry = new THREE.BoxGeometry(5000, 1, 50000); 
-        const material = new THREE.MeshBasicMaterial({color: "#C57738"});
-        const road = new THREE.Mesh(geometry, material); 
-        scene.add(road);
-        road.rotation.y = 7.888; 
-        road.rotation.x = 0;
-        road.position.y = -9.5;
-        road.position.x = 0;
-
-        //initializing texture and obj loader
-        let textureLoader = new THREE.TextureLoader();
- 
-        const loadEnvironment = (mtnUrl) => {
-            const fbxLoader = new FBXLoader();
-            fbxLoader.load(mtnUrl, (mountain) => {
-                scene.add(mountain);
-                mountain.position.y = -10; 
-                let randX;
-                do{
-                    randX = Math.random() * (1000 + 1000) - 1000; 
-                }while (randX >= -100 && randX <= 100);
-                mountain.position.x = randX;
-                mountain.position.z = Math.random() * (-1000 + 100) - 100;
-                mountain.scale.set(0.02, 0.02, 0.02);
-
-                let hillTexture = textureLoader.load('./models/desertMountain/Textures/T_Mountains_desert.png');
-                const hillMaterial = new THREE.MeshPhongMaterial({map: hillTexture});
-
-                mountain.traverse(child => {
-                    if (child.isMesh) {
-                        child.material = hillMaterial;
-                    }
-                });
-            });
-        };
-
-        const mtnFiles = [
-            'models/desertMountain/Fbx/Hill_desert_001.fbx',
-            'models/desertMountain/Fbx/Hill_desert_002.fbx',
-            'models/desertMountain/Fbx/Hill_desert_003.fbx',
-            'models/desertMountain/Fbx/Hill_desert_004.fbx',
-            'models/desertMountain/Fbx/Hill_desert_005.fbx',
-            'models/desertMountain/Fbx/Mountain_desert_001.fbx',
-            'models/desertMountain/Fbx/Mountain_desert_002.fbx',
-            'models/desertMountain/Fbx/Mountain_desert_003.fbx',
-            'models/desertMountain/Fbx/Mountain_desert_004.fbx',
-            'models/desertMountain/Fbx/Mountain_desert_005.fbx',
-            'models/desertMountain/Fbx/Mountain_desert_006.fbx',
-            'models/desertMountain/Fbx/Mountain_desert_007.fbx',
-            'models/desertMountain/Fbx/Mountain_desert_008.fbx',
-            'models/desertMountain/Fbx/Mountain_desert_009.fbx',
-            'models/desertMountain/Fbx/Mountain_desert_010.fbx',
-            'models/desertMountain/Fbx/Plateau_desert_001.fbx',
-            'models/desertMountain/Fbx/Plateau_desert_002.fbx',
-            'models/desertMountain/Fbx/Plateau_desert_003.fbx',
-            'models/desertMountain/Fbx/Plateau_desert_004.fbx',
-            'models/desertMountain/Fbx/Plateau_desert_005.fbx'
-        ];
-        for (let x = 0; x < mtnFiles.length; x++) {
-            for (let i = 0; i < 3; i++) {
-                loadEnvironment(mtnFiles[x]);
-            }
-        }
         animate();
 
-        //resizing window
+        // Resizing window
         window.addEventListener('resize', () => {
             renderer.setSize(window.innerWidth, window.innerHeight);
             camera.aspect = window.innerWidth / window.innerHeight;
