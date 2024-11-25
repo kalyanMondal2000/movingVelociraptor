@@ -376,9 +376,11 @@
 
         // Start game button logic
         const startButton = document.getElementById('start-button');
+        const infoScreen = document.getElementById('info-screen');
         startButton.addEventListener('click', () => {
             isGameStarted = true;
-            startButton.style.display = 'none'; // Hide the start button after clicking
+            startButton.style.display = 'none'; 
+            infoScreen.style.display = 'none';
         });
     </script>
 </body>
