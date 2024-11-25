@@ -304,13 +304,13 @@
 
 
 
-        //player movement
+        
         let moveInProgress = false;
         let isGameStarted = false;
 
         // Disable player movement until game starts
         document.addEventListener('keydown', (event) => {
-            if (!isGameStarted) return; // Don't allow movement before start button is clicked
+            if (!isGameStarted) return; 
 
             if (moveInProgress) return;  // Prevent movement while an action is in progress
 
