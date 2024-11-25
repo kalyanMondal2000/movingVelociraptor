@@ -8,43 +8,65 @@
         body {
             margin: 0;
         }
-
+        @font-face{
+            font-family: 'jurassic'; 
+            src: url('./jurassic-park-font/JurassicPark-BL48.ttf'); 
+        }
         #loading-container {
             position: fixed;
-            top: 50%;
+            top: 40%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 60%;
-            height: 25px;
+            height: 50px;
             background-color: #333;
         }
 
         #loading-bar {
-            width: 0%;
+            width: 10%;
             height: 100%;
             background-color: red;
-            font-size: larger;
+            font-size: 50px;
             text-align: center;
+            font-family: 'jurassic', sans-serif; 
         }
 
         #start-button {
             display: none; /* Hidden initially */
             position: fixed;
-            top: 50%;
+            top: 10%;
             left: 50%;
             transform: translate(-50%, -50%);
             padding: 20px 40px;
-            font-size: 20px;
-            background-color: #28a745;
+            font-size: 50px;
+            background-color: #714511;
             color: white;
             border: none;
             border-radius: 10px;
             cursor: pointer;
             z-index: 100;
+            font-family: 'jurassic', sans-serif; 
         }
 
         #start-button:hover {
-            background-color: #218838;
+            background-color: #28a745;
+        }
+        #info-screen{
+            display: none; 
+            position: fixed; 
+            top: 20%; 
+            left: 50%; 
+            transform: translateX(-50%);
+            width: 80%; 
+            max-width: 600px; 
+            padding: 20px; 
+            background-color: rgba(0, 0, 0, 0.7); 
+            color: white; 
+            border-radius: 10px; 
+            font-size: 18px; 
+            text-align: center; 
+            
+
         }
     </style>
 </head>
@@ -57,6 +79,16 @@
 
     <!-- Start Button HTML -->
     <button id="start-button">Start Game</button>
+
+    <div id="info-screen">
+        <h3>Welcome to the T-Rex Run Game!</h3>
+        <p>
+            In this game, you control a T-Rex dinosaur running through the desert. <br>
+            Controls:<br>
+            A: Move left<br>
+            D: Move right
+        </p>
+    </div>
 
     <script type="module">
         // Imports
@@ -93,7 +125,10 @@
 
         function showStartButton() {
             const startButton = document.getElementById('start-button');
-            startButton.style.display = 'block'; // Show the start button
+            const infoScreen = document.getElementById('info-screen');
+
+            startButton.style.display = 'block';  
+            infoScreen.style.display = 'block';  
         }
 
         function checkLoadingComplete() {
@@ -215,7 +250,7 @@
                 loadEnvironment(mtnFiles[x]);
             }
         }
-        
+
         const loadBushes = (bushUrl)=>{
             fbxLoader.load(bushUrl, (bush)=>{
                 scene.add(bush);
