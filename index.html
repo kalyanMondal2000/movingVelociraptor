@@ -26,6 +26,26 @@
             font-size: larger;
             text-align: center;
         }
+
+        #start-button {
+            display: none; /* Hidden initially */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px 40px;
+            font-size: 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        #start-button:hover {
+            background-color: #218838;
+        }
     </style>
 </head>
 
@@ -34,6 +54,9 @@
     <div id="loading-container">
         <div id="loading-bar">Loading</div>
     </div>
+
+    <!-- Start Button HTML -->
+    <button id="start-button">Start Game</button>
 
     <script type="module">
         // Imports
@@ -63,21 +86,25 @@
             loadingBar.style.width = progress + '%';
         }
 
-
         function hideLoadingBar() {
             const loadingContainer = document.getElementById('loading-container');
             loadingContainer.style.visibility = 'hidden';
         }
 
+        function showStartButton() {
+            const startButton = document.getElementById('start-button');
+            startButton.style.display = 'block'; // Show the start button
+        }
+
         function checkLoadingComplete() {
             if (loadedModels === totalModels) {
                 hideLoadingBar();
+                showStartButton();
             }
         }
 
         let totalModels = 0;
         let loadedModels = 0;
-
 
         // Loading dinosaur
         const loader = new GLTFLoader();
@@ -120,7 +147,6 @@
         }
 
         loadDino('./models/T-Rex.glb'); 
-
 
         // Making ground
         const geometry = new THREE.BoxGeometry(5000, 1, 50000); 
@@ -189,7 +215,7 @@
                 loadEnvironment(mtnFiles[x]);
             }
         }
-
+        
         const loadBushes = (bushUrl)=>{
             fbxLoader.load(bushUrl, (bush)=>{
                 scene.add(bush);
@@ -241,15 +267,16 @@
             }
         }
 
+
+
         //player movement
-
-
-
-
-        
         let moveInProgress = false;
+        let isGameStarted = false;
 
+        // Disable player movement until game starts
         document.addEventListener('keydown', (event) => {
+            if (!isGameStarted) return; // Don't allow movement before start button is clicked
+
             if (moveInProgress) return;  // Prevent movement while an action is in progress
 
             if (event.key === 'a') {
@@ -298,7 +325,7 @@
             requestAnimationFrame(animate);
 
             if (mixer) {
-                mixer.update(rest); 
+                mixer.update(isGameStarted ? sprint : rest); // Update speed based on whether the game started
             }
             renderer.render(scene, camera);
         }
@@ -310,6 +337,13 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
+        });
+
+        // Start game button logic
+        const startButton = document.getElementById('start-button');
+        startButton.addEventListener('click', () => {
+            isGameStarted = true;
+            startButton.style.display = 'none'; // Hide the start button after clicking
         });
     </script>
 </body>
