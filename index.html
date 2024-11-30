@@ -196,11 +196,14 @@
         // Initializing texture and obj loader
         let textureLoader = new THREE.TextureLoader();
         let fbxLoader = new FBXLoader();
+        let hills = []
+
         const loadEnvironment = (mtnUrl) => {
             totalModels++;
             fbxLoader.load(mtnUrl, (mountain) => {
                 scene.add(mountain);
                 mountain.position.y = -10; 
+                hills.push(mountain);
                 let randX;
                 do{
                     randX = Math.random() * (1000 + 1000) - 1000; 
@@ -248,13 +251,16 @@
         for (let x = 0; x < mtnFiles.length; x++) {
             for (let i = 0; i < 1; i++) {
                 loadEnvironment(mtnFiles[x]);
+                
+
             }
         }
-
+        let bushes = []
         const loadBushes = (bushUrl)=>{
             fbxLoader.load(bushUrl, (bush)=>{
                 scene.add(bush);
                 bush.position.y = -15; 
+                bushes.push(bush);
                 let bushX; 
                 do{
                     bushX = Math.random() * (1000 + 1000) - 1000; 
@@ -295,16 +301,15 @@
             "./models/desertplants/Fbx/Desert_plant_018.fbx",
             "./models/desertplants/Fbx/Desert_plant_019.fbx",
             "./models/desertplants/Fbx/Desert_plant_020.fbx",];
-
+            
         for (let x = 0; x < bushFiles.length; x++) {
             for (let i = 0; i < 6; i++) {
                 loadBushes(bushFiles[x]);
+            
             }
         }
 
 
-
-        
         let moveInProgress = false;
         let isGameStarted = false;
 
@@ -351,16 +356,51 @@
             event.preventDefault(); 
         });
 
-        // Variables for animation speed
+ 
+ 
+function moveEnv() {
+    
+    hills.forEach((hill) => {
+        hill.position.z += 10; // Move hill forward along the Z-axis
+        if (hill.position.z >= 20) { // If it passes the threshold
+            hill.position.z = -1200; // Reset to the beginning
+        }
+    });
+
+    // Move bushes and reset if they pass the threshold
+    bushes.forEach((bush) => {
+        bush.position.z += 10; // Move bush forward along the Z-axis
+        if (bush.position.z >= 20) { // If it passes the threshold
+            bush.position.z = -1200; // Reset to the beginning
+        }
+    });
+}
+
+
+        
+        
+
         const rest = 0; 
         const sprint = 0.08; 
 
+        const startButton = document.getElementById('start-button');
+        const infoScreen = document.getElementById('info-screen');
+        startButton.addEventListener('click', () => {
+            isGameStarted = true;
+            startButton.style.display = 'none'; 
+            infoScreen.style.display = 'none';
+            const animateEnv = setInterval(moveEnv,100)
+        });
+
         // Animate the dino
         function animate() {
-            requestAnimationFrame(animate);
-
+            
+                requestAnimationFrame(animate);
+            
+            
+            
             if (mixer) {
-                mixer.update(isGameStarted ? sprint : rest); // Update speed based on whether the game started
+                mixer.update(isGameStarted ? sprint : rest); 
             }
             renderer.render(scene, camera);
         }
@@ -374,14 +414,6 @@
             camera.updateProjectionMatrix();
         });
 
-        // Start game button logic
-        const startButton = document.getElementById('start-button');
-        const infoScreen = document.getElementById('info-screen');
-        startButton.addEventListener('click', () => {
-            isGameStarted = true;
-            startButton.style.display = 'none'; 
-            infoScreen.style.display = 'none';
-        });
     </script>
 </body>
 </html>
