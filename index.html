@@ -377,22 +377,21 @@ function moveEnv() {
 }
 
 
-        
+        const animateEnv = setInterval(moveEnv,100)
         
 
         const rest = 0; 
         const sprint = 0.08; 
 
+        
         const startButton = document.getElementById('start-button');
         const infoScreen = document.getElementById('info-screen');
         startButton.addEventListener('click', () => {
             isGameStarted = true;
             startButton.style.display = 'none'; 
             infoScreen.style.display = 'none';
-            const animateEnv = setInterval(moveEnv,100)
         });
-
-        // Animate the dino
+        
         function animate() {
             
                 requestAnimationFrame(animate);
@@ -414,6 +413,7 @@ function moveEnv() {
             camera.updateProjectionMatrix();
         });
 
+       
     </script>
 </body>
 </html>
