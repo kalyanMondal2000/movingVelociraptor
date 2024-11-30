@@ -305,10 +305,10 @@
             }
         }
 
-
+    
         let moveInProgress = false;
         let isGameStarted = false;
-
+        let jumping; 
         document.addEventListener('keydown', (event) => {
             if (!isGameStarted) return; 
 
@@ -342,7 +342,21 @@
                     }, 50); 
                 }, 50); 
             }
-
+            if (event.key === 'j') {
+                
+                moveInProgress = true;
+                
+                setTimeout(() => {
+                    dino.position.y += 10;
+                    jumping = true; 
+                    
+                    setTimeout(() => {
+                        dino.position.y -= 10;
+                        moveInProgress = false;
+                        jumping = false;
+                    }, 500); 
+                }, 10); 
+            }
             event.preventDefault(); 
         });
 
@@ -390,6 +404,7 @@ function moveEnv() {
             
             if (mixer) {
                 mixer.update(isGameStarted ? sprint : rest); 
+
             }
             renderer.render(scene, camera);
         }
