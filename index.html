@@ -366,7 +366,7 @@ function moveEnv() {
 }
 
 
-        const animateEnv = setInterval(moveEnv,100)
+        
         
 
         const rest = 0; 
@@ -379,6 +379,7 @@ function moveEnv() {
             isGameStarted = true;
             startButton.style.display = 'none'; 
             infoScreen.style.display = 'none';
+            const animateEnv = setInterval(moveEnv,100)
         });
         
         function animate() {
