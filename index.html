@@ -32,7 +32,7 @@
         }
 
         #start-button {
-            display: none; /* Hidden initially */
+            display: none;
             position: fixed;
             top: 10%;
             left: 50%;
@@ -72,12 +72,12 @@
 </head>
 
 <body>
-    <!-- Loading Bar HTML -->
+    
     <div id="loading-container">
         <div id="loading-bar">Loading</div>
     </div>
 
-    <!-- Start Button HTML -->
+    
     <button id="start-button">Start Game</button>
 
     <div id="info-screen">
@@ -91,12 +91,12 @@
 </div>
 
     <script type="module">
-        // Imports
+        
         import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
         import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
         import { FBXLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/FBXLoader.js";
 
-        // Initializing variables
+        
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 1000);
         camera.position.y = 20;
@@ -141,7 +141,6 @@
         let totalModels = 0;
         let loadedModels = 0;
 
-        // Loading dinosaur
         const loader = new GLTFLoader();
         
         function loadDino(url) {
@@ -169,7 +168,6 @@
                     checkLoadingComplete();
                 },
                 (xhr) => {
-                    // Update the loading bar as a percentage of the total file size loaded
                     const progress = (xhr.loaded / xhr.total) * 100;
                     updateLoadingBar(progress);
                 },
@@ -183,7 +181,6 @@
 
         loadDino('./models/T-Rex.glb'); 
 
-        // Making ground
         const geometry = new THREE.BoxGeometry(5000, 1, 50000); 
         const material = new THREE.MeshBasicMaterial({color: "#C57738"});
         const road = new THREE.Mesh(geometry, material); 
@@ -193,7 +190,6 @@
         road.position.y = -9.5;
         road.position.x = 0;
 
-        // Initializing texture and obj loader
         let textureLoader = new THREE.TextureLoader();
         let fbxLoader = new FBXLoader();
         let hills = []
@@ -313,41 +309,35 @@
         let moveInProgress = false;
         let isGameStarted = false;
 
-        // Disable player movement until game starts
         document.addEventListener('keydown', (event) => {
             if (!isGameStarted) return; 
 
-            if (moveInProgress) return;  // Prevent movement while an action is in progress
+            if (moveInProgress) return;  
 
             if (event.key === 'a') {
-                // Rotate left
                 dino.rotation.y = 10;
                 moveInProgress = true;
 
                 setTimeout(() => {
-                    // Pause before moving
                     dino.position.x -= 10;
 
-                    // Reset rotation after move
                     setTimeout(() => {
-                        dino.rotation.y = 9.5; // Straighten out
+                        dino.rotation.y = 9.5; 
                         moveInProgress = false;
                     }, 50); 
                 }, 50); 
             }
 
             if (event.key === 'd') {
-                // Rotate right
                 dino.rotation.y = 9;
                 moveInProgress = true;
 
                 setTimeout(() => {
-                    // Pause before moving
                     dino.position.x += 10;
 
-                    // Reset rotation after move
+                    
                     setTimeout(() => {
-                        dino.rotation.y = 9.5; // Straighten out
+                        dino.rotation.y = 9.5; 
                         moveInProgress = false;
                     }, 50); 
                 }, 50); 
@@ -361,17 +351,16 @@
 function moveEnv() {
     
     hills.forEach((hill) => {
-        hill.position.z += 10; // Move hill forward along the Z-axis
-        if (hill.position.z >= 20) { // If it passes the threshold
-            hill.position.z = -1200; // Reset to the beginning
+        hill.position.z += 10; 
+        if (hill.position.z >= 20) { 
+            hill.position.z = -1200; 
         }
     });
 
-    // Move bushes and reset if they pass the threshold
     bushes.forEach((bush) => {
-        bush.position.z += 10; // Move bush forward along the Z-axis
-        if (bush.position.z >= 20) { // If it passes the threshold
-            bush.position.z = -1200; // Reset to the beginning
+        bush.position.z += 10; 
+        if (bush.position.z >= 20) { 
+            bush.position.z = -1200; 
         }
     });
 }
