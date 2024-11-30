@@ -89,101 +89,15 @@
             D: Move right
         </p>
 </div>
-
+    <script type="module" src="./js/variables.js"></script>
+    <script type="module" src="./js/loadingFunc.js"></script>
+    <script type="module" src="./js/dinoLoader.js"></script>
+    <script type="module" src="./js/hillLoader.js"></script>
+    <script type="module" src="./js/bushLoader.js"></script>
     <script type="module">
-        // Imports
-        import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
-        import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
-        import { FBXLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/FBXLoader.js";
-
-        // Initializing variables
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 1000);
-        camera.position.y = 20;
-        camera.rotation.x = -30 * THREE.Math.DEG2RAD;
-        scene.background = new THREE.Color('#002244');
-        const renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-        let model, mixer;
-        camera.position.z = 15;
-        const topLight = new THREE.DirectionalLight('white', 1); 
-        topLight.position.set(500, 500, 500);
-        topLight.castShadow = true;
-        scene.add(topLight);
-        var dino;
-
-        function updateLoadingBar(progress) {
-            const loadingBar = document.getElementById('loading-bar');
-            loadingBar.style.width = progress + '%';
-        }
-
-        function hideLoadingBar() {
-            const loadingContainer = document.getElementById('loading-container');
-            loadingContainer.style.visibility = 'hidden';
-        }
-
-        function showStartButton() {
-            const startButton = document.getElementById('start-button');
-            const infoScreen = document.getElementById('info-screen');
-
-            startButton.style.display = 'block';  
-            infoScreen.style.display = 'block';  
-        }
-
-        function checkLoadingComplete() {
-            if (loadedModels === totalModels) {
-                hideLoadingBar();
-                showStartButton();
-            }
-        }
-
-        let totalModels = 0;
-        let loadedModels = 0;
-
-        // Loading dinosaur
-        const loader = new GLTFLoader();
-        
-        function loadDino(url) {
-            totalModels++;
-            loader.load(url, 
-                (gltf) => {
-                    dino = gltf.scene;
-                    scene.add(dino);
-                    dino.rotation.y = 9.5; 
-                    dino.rotation.z = 6.4;
-                    dino.position.y = -10;
-                    dino.position.x = -1;
-                    dino.position.z = -3;
-
-                    dino.scale.set(0.75, 0.75, 0.75); 
-
-                    if (gltf.animations.length > 0) {
-                        mixer = new THREE.AnimationMixer(dino);
-                        gltf.animations.forEach((clip) => {
-                            mixer.clipAction(clip).play();
-                        });
-                    }
-
-                    loadedModels++;
-                    checkLoadingComplete();
-                },
-                (xhr) => {
-                    // Update the loading bar as a percentage of the total file size loaded
-                    const progress = (xhr.loaded / xhr.total) * 100;
-                    updateLoadingBar(progress);
-                },
-                (error) => {
-                    console.error(error);
-                    loadedModels++;
-                    checkLoadingComplete();
-                }
-            );
-        }
-
         loadDino('./models/T-Rex.glb'); 
 
-        // Making ground
+        
         const geometry = new THREE.BoxGeometry(5000, 1, 50000); 
         const material = new THREE.MeshBasicMaterial({color: "#C57738"});
         const road = new THREE.Mesh(geometry, material); 
@@ -192,36 +106,6 @@
         road.rotation.x = 0;
         road.position.y = -9.5;
         road.position.x = 0;
-
-        // Initializing texture and obj loader
-        let textureLoader = new THREE.TextureLoader();
-        let fbxLoader = new FBXLoader();
-        const loadEnvironment = (mtnUrl) => {
-            totalModels++;
-            fbxLoader.load(mtnUrl, (mountain) => {
-                scene.add(mountain);
-                mountain.position.y = -10; 
-                let randX;
-                do{
-                    randX = Math.random() * (1000 + 1000) - 1000; 
-                }while (randX >= -200 && randX <= 200);
-                mountain.position.x = randX;
-                mountain.position.z = Math.random() * (-1000 + 100) - 100;
-                mountain.scale.set(0.05, 0.05, 0.05);
-
-                let hillTexture = textureLoader.load('./models/desertMountain/Textures/T_Mountains_desert.png');
-                const hillMaterial = new THREE.MeshPhongMaterial({map: hillTexture});
-
-                mountain.traverse(child => {
-                    if (child.isMesh) {
-                        child.material = hillMaterial;
-                    }
-                });
-
-                loadedModels++;
-                checkLoadingComplete();
-            });
-        };
 
         const mtnFiles = [
             'models/desertMountain/Fbx/Hill_desert_001.fbx',
@@ -249,29 +133,6 @@
             for (let i = 0; i < 1; i++) {
                 loadEnvironment(mtnFiles[x]);
             }
-        }
-
-        const loadBushes = (bushUrl)=>{
-            fbxLoader.load(bushUrl, (bush)=>{
-                scene.add(bush);
-                bush.position.y = -15; 
-                let bushX; 
-                do{
-                    bushX = Math.random() * (1000 + 1000) - 1000; 
-                }while(bushX >= -200 && bushX <= 200);
-                bush.position.x = bushX; 
-                bush.position.z = Math.random()*(-1000 + 100) - 100;
-                bush.scale.set(0.25,0.25,0.25);
-
-                let bushTexture = textureLoader.load('./models/desertplants/Textures/T_Desert_plants.png');
-                const bushMaterial = new THREE.MeshPhongMaterial({map: bushTexture});
-
-                bush.traverse(child => {
-                    if (child.isMesh) {
-                        child.material = bushMaterial;
-                    }
-                });
-            })
         }
 
         const bushFiles = [
@@ -302,13 +163,6 @@
             }
         }
 
-
-
-        
-        let moveInProgress = false;
-        let isGameStarted = false;
-
-        // Disable player movement until game starts
         document.addEventListener('keydown', (event) => {
             if (!isGameStarted) return; 
 
