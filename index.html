@@ -100,7 +100,7 @@
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 1000);
         camera.position.y = 20;
-        camera.rotation.x = -30 * THREE.Math.DEG2RAD;
+        camera.rotation.x = -10 * THREE.Math.DEG2RAD;
         scene.background = new THREE.Color('#002244');
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -151,9 +151,9 @@
                     scene.add(dino);
                     dino.rotation.y = 9.5; 
                     dino.rotation.z = 6.4;
-                    dino.position.y = -10;
+                    dino.position.y = -5;
                     dino.position.x = -1;
-                    dino.position.z = -3;
+                    dino.position.z = -10;
 
                     dino.scale.set(0.75, 0.75, 0.75); 
 
@@ -180,20 +180,25 @@
         }
 
         loadDino('./models/T-Rex.glb'); 
-
-        const geometry = new THREE.BoxGeometry(5000, 1, 50000); 
-        const material = new THREE.MeshBasicMaterial({color: "#C57738"});
+        
+        const geometry = new THREE.BoxGeometry(5000, 1, 5000); 
+        const material = new THREE.MeshBasicMaterial({color: "#a2681e"});
         const road = new THREE.Mesh(geometry, material); 
         scene.add(road);
         road.rotation.y = 7.888; 
         road.rotation.x = 0;
         road.position.y = -9.5;
         road.position.x = 0;
+        
 
         let textureLoader = new THREE.TextureLoader();
         let fbxLoader = new FBXLoader();
-        let hills = []
 
+        
+        
+        
+        let hills = []
+        
         const loadEnvironment = (mtnUrl) => {
             totalModels++;
             fbxLoader.load(mtnUrl, (mountain) => {
@@ -223,6 +228,7 @@
         };
 
         const mtnFiles = [
+            
             'models/desertMountain/Fbx/Hill_desert_001.fbx',
             'models/desertMountain/Fbx/Hill_desert_002.fbx',
             'models/desertMountain/Fbx/Hill_desert_003.fbx',
