@@ -12,6 +12,7 @@
             font-family: 'jurassic'; 
             src: url('./jurassic-park-font/JurassicPark-BL48.ttf'); 
         }
+        
         #loading-container {
             position: fixed;
             top: 40%;
@@ -100,7 +101,7 @@
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 1000);
         camera.position.y = 20;
-        camera.rotation.x = -10 * THREE.Math.DEG2RAD;
+        camera.rotation.x = -20 * THREE.Math.DEG2RAD;
         scene.background = new THREE.Color('#002244');
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -249,7 +250,7 @@
             'models/desertMountain/Fbx/Plateau_desert_005.fbx'];
 
         for (let x = 0; x < mtnFiles.length; x++) {
-            for (let i = 0; i < 1; i++) {
+            for (let i = 0; i < 3; i++) {
                 loadEnvironment(mtnFiles[x]);
                 
 
@@ -308,8 +309,35 @@
             
             }
         }
+        let obstacles = []
+        const loadObstacle = (url) =>{
+            fbxLoader.load(url, (obstacle)=>{
+                
+                scene.add(obstacle)
+                obstacle.position.y = -20; 
+                obstacles.push(obstacle);
+                let obstacleX; 
+                
+                obstacleX = Math.random() * (50 + 50) - 50; 
+            
+                obstacle.position.x = obstacleX; 
+                obstacle.position.z = Math.random() * (100 + 1000) - 1000; 
+                obstacle.scale.set(0.25,0.5,0.25);
 
-    
+                let obstacleTexture = textureLoader.load('./models/desertplants/Textures/T_Desert_plants.png');
+                const obstacleMaterial = new THREE.MeshPhongMaterial({map: obstacleTexture});
+
+                obstacle.traverse(child => {
+                    if (child.isMesh) {
+                        child.material = obstacleMaterial;
+                    }
+                });
+            })
+        }
+        for(let x= 0; x<25; x++){
+        loadObstacle('models/desertplants/Fbx/Desert_plant_012.fbx');
+        }
+
         let moveInProgress = false;
         let isGameStarted = false;
         let jumping; 
@@ -363,8 +391,8 @@
                         if(mixer){
                         mixer.timeScale = 1; 
                     }
-                    }, 200); 
-                }, 500); 
+                    }, 500); 
+                }, 10); 
             }
             event.preventDefault(); 
         });
@@ -386,6 +414,12 @@ function moveEnv() {
             bush.position.z = -1200; 
         }
     });
+    obstacles.forEach((obstacle)=>{
+        obstacle.position.z += 10; 
+        if (obstacle.position.z >= 20) { 
+            obstacle.position.z = -1200; 
+        }
+    })
 }
 
 
@@ -426,7 +460,6 @@ function moveEnv() {
 
         animate();
 
-        // Resizing window
         window.addEventListener('resize', () => {
             renderer.setSize(window.innerWidth, window.innerHeight);
             camera.aspect = window.innerWidth / window.innerHeight;
