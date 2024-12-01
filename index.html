@@ -155,7 +155,7 @@
                     dino.position.x = -1;
                     dino.position.z = -10;
 
-                    dino.scale.set(0.75, 0.75, 0.75); 
+                    dino.scale.set(1, 1, 1); 
 
                     if (gltf.animations.length > 0) {
                         mixer = new THREE.AnimationMixer(dino);
@@ -325,13 +325,13 @@
                 moveInProgress = true;
 
                 setTimeout(() => {
-                    dino.position.x -= 10;
+                    dino.position.x -= 15;
 
                     setTimeout(() => {
                         dino.rotation.y = 9.5; 
                         moveInProgress = false;
-                    }, 50); 
-                }, 50); 
+                    }, 100); 
+                }, 100); 
             }
 
             if (event.key === 'd') {
@@ -339,14 +339,14 @@
                 moveInProgress = true;
 
                 setTimeout(() => {
-                    dino.position.x += 10;
+                    dino.position.x += 15;
 
                     
                     setTimeout(() => {
                         dino.rotation.y = 9.5; 
                         moveInProgress = false;
-                    }, 50); 
-                }, 50); 
+                    }, 100); 
+                }, 100); 
             }
             if (event.key === 'j') {
                 
@@ -354,12 +354,12 @@
                 
                 setTimeout(() => {
                     dino.position.y += 10;
-                    jumping = true; 
+                    
                     
                     setTimeout(() => {
                         dino.position.y -= 10;
                         moveInProgress = false;
-                        jumping = false;
+                        
                     }, 500); 
                 }, 10); 
             }
@@ -410,10 +410,12 @@ function moveEnv() {
             
             if (mixer) {
                 mixer.update(isGameStarted ? sprint : rest); 
-
+                }
+                renderer.render(scene, camera);
             }
-            renderer.render(scene, camera);
-        }
+            
+            
+        
 
         animate();
 
