@@ -268,7 +268,7 @@
                 }while(bushX >= -200 && bushX <= 200);
                 bush.position.x = bushX; 
                 bush.position.z = Math.random()*(-1000 + 100) - 100;
-                bush.scale.set(0.25,0.25,0.25);
+                bush.scale.set(0.5,0.5,0.5);
 
                 let bushTexture = textureLoader.load('./models/desertplants/Textures/T_Desert_plants.png');
                 const bushMaterial = new THREE.MeshPhongMaterial({map: bushTexture});
@@ -321,7 +321,7 @@
                 obstacleX = Math.random() * (50 + 50) - 50; 
             
                 obstacle.position.x = obstacleX; 
-                obstacle.position.z = Math.random() * (100 + 1000) - 1000; 
+                obstacle.position.z = Math.random() * (-100 + 1000) - 1000; 
                 obstacle.scale.set(0.25,0.5,0.25);
 
                 let obstacleTexture = textureLoader.load('./models/desertplants/Textures/T_Desert_plants.png');
@@ -382,7 +382,7 @@
                     dino.position.y += 15;
                     jumping = true;
                     if(mixer){
-                        mixer.timeScale = 0.25; 
+                        mixer.timeScale = 0; 
                     }
                     setTimeout(() => {
                         dino.position.y -= 15;
@@ -449,7 +449,7 @@ function moveEnv() {
                 mixer.update(isGameStarted ? sprint : rest); 
                 }
                 if(jumping){
-                    mixer.timeScale = 0.25;
+                    mixer.timeScale = 0;
                 }
 
                 renderer.render(scene, camera);
