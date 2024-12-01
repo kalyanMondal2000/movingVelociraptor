@@ -193,9 +193,6 @@
 
         let textureLoader = new THREE.TextureLoader();
         let fbxLoader = new FBXLoader();
-
-        
-        
         
         let hills = []
         
@@ -227,6 +224,7 @@
             });
         };
 
+       
         const mtnFiles = [
             
             'models/desertMountain/Fbx/Hill_desert_001.fbx',
@@ -353,15 +351,20 @@
                 moveInProgress = true;
                 
                 setTimeout(() => {
-                    dino.position.y += 10;
-                    
-                    
+                    dino.position.y += 15;
+                    jumping = true;
+                    if(mixer){
+                        mixer.timeScale = 0.25; 
+                    }
                     setTimeout(() => {
-                        dino.position.y -= 10;
+                        dino.position.y -= 15;
                         moveInProgress = false;
-                        
-                    }, 500); 
-                }, 10); 
+                        jumping = false; 
+                        if(mixer){
+                        mixer.timeScale = 1; 
+                    }
+                    }, 200); 
+                }, 500); 
             }
             event.preventDefault(); 
         });
@@ -404,13 +407,17 @@ function moveEnv() {
         
         function animate() {
             
-                requestAnimationFrame(animate);
+            requestAnimationFrame(animate);
             
-            
+           
             
             if (mixer) {
                 mixer.update(isGameStarted ? sprint : rest); 
                 }
+                if(jumping){
+                    mixer.timeScale = 0.25;
+                }
+
                 renderer.render(scene, camera);
             }
             
