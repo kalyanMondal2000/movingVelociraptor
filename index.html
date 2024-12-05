@@ -268,7 +268,7 @@
                 }while(bushX >= -200 && bushX <= 200);
                 bush.position.x = bushX; 
                 bush.position.z = Math.random()*(-1000 + 100) - 100;
-                bush.scale.set(0.5,0.5,0.5);
+                bush.scale.set(0.25,0.5,0.25);
 
                 let bushTexture = textureLoader.load('./models/desertplants/Textures/T_Desert_plants.png');
                 const bushMaterial = new THREE.MeshPhongMaterial({map: bushTexture});
@@ -318,9 +318,23 @@
                 obstacles.push(obstacle);
                 let obstacleX; 
                 
-                obstacleX = Math.random() * (50 + 50) - 50; 
-            
-                obstacle.position.x = obstacleX; 
+                obstacleX = Math.round(Math.random() * (5 - 1) + 1);
+                console.log(obstacleX)
+                if(obstacleX == 1){
+                    obstacle.position.x = 29; 
+                }
+                if(obstacleX == 2){
+                    obstacle.position.x = -1; 
+                }
+                if(obstacleX == 3){
+                    obstacle.position.x = -16; 
+                }
+                if(obstacleX == 4){
+                    obstacle.position.x = 14; 
+                }
+                if(obstacleX == 5){
+                    obstacle.position.x = -31; 
+                }
                 obstacle.position.z = Math.random() * (-100 + 1000) - 1000; 
                 obstacle.scale.set(0.25,0.5,0.25);
 
@@ -334,7 +348,7 @@
                 });
             })
         }
-        for(let x= 0; x<25; x++){
+        for(let x= 0; x<20; x++){
         loadObstacle('models/desertplants/Fbx/Desert_plant_012.fbx');
         }
 
@@ -356,8 +370,8 @@
                     setTimeout(() => {
                         dino.rotation.y = 9.5; 
                         moveInProgress = false;
-                    }, 100); 
-                }, 100); 
+                    }, 10); 
+                }, 10); 
             }
 
             if (event.key === 'd') {
@@ -371,27 +385,27 @@
                     setTimeout(() => {
                         dino.rotation.y = 9.5; 
                         moveInProgress = false;
-                    }, 100); 
-                }, 100); 
+                    }, 10); 
+                }, 10); 
             }
             if (event.key === 'j') {
                 
                 moveInProgress = true;
                 
                 setTimeout(() => {
-                    dino.position.y += 15;
+                    dino.position.y += 18;
                     jumping = true;
                     if(mixer){
                         mixer.timeScale = 0; 
                     }
                     setTimeout(() => {
-                        dino.position.y -= 15;
+                        dino.position.y -= 18;
                         moveInProgress = false;
                         jumping = false; 
                         if(mixer){
                         mixer.timeScale = 1; 
                     }
-                    }, 500); 
+                    }, 200); 
                 }, 10); 
             }
             event.preventDefault(); 
@@ -404,20 +418,20 @@ function moveEnv() {
     hills.forEach((hill) => {
         hill.position.z += 10; 
         if (hill.position.z >= 20) { 
-            hill.position.z = -1200; 
+            hill.position.z = Math.random() * (-1000 + 900) -900;
         }
     });
 
     bushes.forEach((bush) => {
         bush.position.z += 10; 
         if (bush.position.z >= 20) { 
-            bush.position.z = -1200; 
+            bush.position.z = Math.random() * (-1000 + 900) -900;
         }
     });
     obstacles.forEach((obstacle)=>{
         obstacle.position.z += 10; 
         if (obstacle.position.z >= 20) { 
-            obstacle.position.z = -1200; 
+            obstacle.position.z = Math.random() * (-1000 + 900) -900;
         }
     })
 }
@@ -436,7 +450,7 @@ function moveEnv() {
             isGameStarted = true;
             startButton.style.display = 'none'; 
             infoScreen.style.display = 'none';
-            const animateEnv = setInterval(moveEnv,100)
+            const animateEnv = setInterval(moveEnv,50)
         });
         
         function animate() {
@@ -449,7 +463,7 @@ function moveEnv() {
                 mixer.update(isGameStarted ? sprint : rest); 
                 }
                 if(jumping){
-                    mixer.timeScale = 0;
+                    mixer.timeScale = 1.2;
                 }
 
                 renderer.render(scene, camera);
