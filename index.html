@@ -26,7 +26,7 @@
         #loading-bar {
             width: 10%;
             height: 100%;
-            background-color: red;
+            background-color: black;
             font-size: 50px;
             text-align: center;
             font-family: 'jurassic', sans-serif; 
@@ -50,7 +50,7 @@
         }
 
         #start-button:hover {
-            background-color: #28a745;
+            background-color: darkgreen;
         }
         #info-screen{
             display: none; 
@@ -68,6 +68,18 @@
             text-align: center; 
             
 
+        }
+        #game-over-screen{
+            font-family: 'jurassic', sans-serif; 
+            font-size:40px;
+            color: white;
+            width: 300px;
+            height: 140px;
+            padding: 20px 40px;
+        }
+        #game-over-message{
+            font-family: 'jurassic', sans-serif; 
+            font-size:50px;
         }
     </style>
 </head>
@@ -89,6 +101,12 @@
             A: Move left<br>
             D: Move right
         </p>
+</div>
+
+<div id="game-over-screen" style="display: none; position: fixed; top: 15%; left: 50%; transform: translate(-50%, -50%); background-color: #714511;  text-align: center; border-radius: 10px;">
+    <div id = 'game-over-message'>Game Over!</div>
+    Final Score:<div id ='score'></div><b></b>
+    Click to Restart
 </div>
 
     <script type="module">
@@ -355,61 +373,74 @@
         let moveInProgress = false;
         let isGameStarted = false;
         let jumping; 
-        document.addEventListener('keydown', (event) => {
-            if (!isGameStarted) return; 
+document.addEventListener('keydown', (event) => {
+    if (!isGameStarted) return; 
 
-            if (moveInProgress) return;  
+    if (moveInProgress) return;  
 
-            if (event.key === 'a') {
-                dino.rotation.y = 10;
-                moveInProgress = true;
+    const minX = -31;
+    const maxX = 29;
 
-                setTimeout(() => {
-                    dino.position.x -= 15;
+    if (event.key === 'a') {
+        
+        dino.rotation.y = 10;
+        moveInProgress = true;
 
-                    setTimeout(() => {
-                        dino.rotation.y = 9.5; 
-                        moveInProgress = false;
-                    }, 10); 
-                }, 10); 
+        setTimeout(() => {
+            
+            if (dino.position.x > minX) {
+                dino.position.x -= 15;
             }
 
-            if (event.key === 'd') {
-                dino.rotation.y = 9;
-                moveInProgress = true;
+            setTimeout(() => {
+                dino.rotation.y = 9.5; 
+                moveInProgress = false;
+            }, 50); 
+        }, 10); 
+    }
 
-                setTimeout(() => {
-                    dino.position.x += 15;
+    if (event.key === 'd') {
+        
+        dino.rotation.y = 9;
+        moveInProgress = true;
 
-                    
-                    setTimeout(() => {
-                        dino.rotation.y = 9.5; 
-                        moveInProgress = false;
-                    }, 10); 
-                }, 10); 
+        setTimeout(() => {
+            
+            if (dino.position.x < maxX) {
+                dino.position.x += 15;
             }
-            if (event.key === 'j') {
-                
-                moveInProgress = true;
-                
-                setTimeout(() => {
-                    dino.position.y += 18;
-                    jumping = true;
-                    if(mixer){
-                        mixer.timeScale = 0; 
-                    }
-                    setTimeout(() => {
-                        dino.position.y -= 18;
-                        moveInProgress = false;
-                        jumping = false; 
-                        if(mixer){
-                        mixer.timeScale = 1; 
-                    }
-                    }, 250); 
-                }, 10); 
+
+            setTimeout(() => {
+                dino.rotation.y = 9.5; 
+                moveInProgress = false;
+            }, 50); 
+        }, 10); 
+    }
+
+    if (event.key === 'j') {
+        
+        moveInProgress = true;
+
+        setTimeout(() => {
+            dino.position.y += 18;
+            jumping = true;
+            if (mixer) {
+                mixer.timeScale = 0; 
             }
-            event.preventDefault(); 
-        });
+
+            setTimeout(() => {
+                dino.position.y -= 18;
+                moveInProgress = false;
+                jumping = false; 
+                if (mixer) {
+                    mixer.timeScale = 1; 
+                }
+            }, 250); 
+        }, 10); 
+    }
+
+    event.preventDefault(); 
+});
 
  
  
@@ -437,33 +468,66 @@ function moveEnv() {
 }
 
 
-        
+function checkCollision() {
+    obstacles.forEach((obstacle) => {
+        const dinoBox = new THREE.Box3().setFromObject(dino); 
+        const scale1 = 0.8;
+        const center1 = dinoBox.getCenter(new THREE.Vector3());
+        const size1 = dinoBox.getSize(new THREE.Vector3()).multiplyScalar(scale1);
+        dinoBox.setFromCenterAndSize(center1, size1);
+        const obstacleBox = new THREE.Box3().setFromObject(obstacle); 
+        const scale = 0.25;
+        const center = obstacleBox.getCenter(new THREE.Vector3());
+        const size = obstacleBox.getSize(new THREE.Vector3()).multiplyScalar(scale);
+        obstacleBox.setFromCenterAndSize(center, size);
+
+        if (dinoBox.intersectsBox(obstacleBox)) {
+            
+            gameOver();
+        }
+    });
+}
+
+function gameOver() {
+    
+    clearInterval(animateEnv);
+
+   
+    isGameStarted = false;
+
+    const gameOverScreen = document.getElementById('game-over-screen');
+    gameOverScreen.style.display = 'block';
+    mixer.timeScale = 0;
+    moveInProgress = false;
+}     
         
 
         const rest = 0; 
-        const sprint = 0.08; 
+        const sprint = 0.1; 
 
-        
+        let animateEnv = null; 
         const startButton = document.getElementById('start-button');
         const infoScreen = document.getElementById('info-screen');
         startButton.addEventListener('click', () => {
             isGameStarted = true;
             startButton.style.display = 'none'; 
             infoScreen.style.display = 'none';
-            const animateEnv = setInterval(moveEnv,50)
+            animateEnv = setInterval(moveEnv,50)
         });
         
         function animate() {
             
             requestAnimationFrame(animate);
             
-           
+            if (isGameStarted) {
+                checkCollision();
+            }
             
             if (mixer) {
                 mixer.update(isGameStarted ? sprint : rest); 
                 }
                 if(jumping){
-                    mixer.timeScale = 1.2;
+                    mixer.timeScale = 1.5;
                 }
 
                 renderer.render(scene, camera);
