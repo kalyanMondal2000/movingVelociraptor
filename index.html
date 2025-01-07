@@ -336,23 +336,23 @@
                 obstacles.push(obstacle);
                 let obstacleX; 
                 
-                obstacleX = Math.round(Math.random() * (5 - 1) + 1);
+                obstacleX = Math.round(Math.random() * (3 - 1) + 1);
                 console.log(obstacleX)
-                if(obstacleX == 1){
+                /*if(obstacleX == 1){
                     obstacle.position.x = 29; 
-                }
-                if(obstacleX == 2){
+                }*/
+                if(obstacleX == 1){
                     obstacle.position.x = -1; 
                 }
+                if(obstacleX == 2){
+                    obstacle.position.x = -20; 
+                }
                 if(obstacleX == 3){
-                    obstacle.position.x = -16; 
+                    obstacle.position.x = 18; 
                 }
-                if(obstacleX == 4){
-                    obstacle.position.x = 14; 
-                }
-                if(obstacleX == 5){
+                /*if(obstacleX == 5){
                     obstacle.position.x = -31; 
-                }
+                }*/
                 obstacle.position.z = Math.random() * (-100 + 1000) - 1000; 
                 obstacle.scale.set(0.25,0.5,0.25);
 
@@ -366,7 +366,7 @@
                 });
             })
         }
-        for(let x= 0; x<30; x++){
+        for(let x= 0; x<35; x++){
         loadObstacle('models/desertplants/Fbx/Desert_plant_012.fbx');
         }
 
@@ -395,7 +395,7 @@ document.addEventListener('keydown', (event) => {
             setTimeout(() => {
                 dino.rotation.y = 9.5; 
                 moveInProgress = false;
-            }, 50); 
+            }, 100); 
         }, 10); 
     }
 
@@ -413,7 +413,7 @@ document.addEventListener('keydown', (event) => {
             setTimeout(() => {
                 dino.rotation.y = 9.5; 
                 moveInProgress = false;
-            }, 50); 
+            }, 100); 
         }, 10); 
     }
 
@@ -500,12 +500,10 @@ function gameOver() {
     mixer.timeScale = 0;
     moveInProgress = false;
 }     
-function restart(){
 
-}        
 
         const rest = 0; 
-        const sprint = 0.1; 
+    let sprint = 0.1; 
 
         let animateEnv = null; 
         const startButton = document.getElementById('start-button');
