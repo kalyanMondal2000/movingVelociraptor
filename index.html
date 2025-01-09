@@ -92,7 +92,7 @@
 
     
     <button id="start-button">Start Game</button>
-
+    <div id = "score"> </div>
     <div id="info-screen">
         <h3>Welcome to the T-Rex Run Game!</h3>
         <p>
@@ -103,11 +103,11 @@
         </p>
 </div>
 
-<button id="game-over-screen" style="display: none; position: fixed; top: 15%; left: 50%; transform: translate(-50%, -50%); background-color: #714511;  text-align: center; border-radius: 10px;">
+<button onclick ="location.reload()" id="game-over-screen" style="display: none; position: fixed; top: 15%; left: 50%; transform: translate(-50%, -50%); background-color: #714511;  text-align: center; border-radius: 10px;">
     <div id = 'game-over-message'>Game Over!</div>
     Final Score:<div id ='score'></div><b></b>
     Click to Restart
-</button>
+</button >
 
     <script type="module">
         
@@ -118,7 +118,8 @@
         
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 1000);
-        camera.position.y = 20;
+        camera.position.y = 50;
+        
         camera.rotation.x = -20 * THREE.Math.DEG2RAD;
         scene.background = new THREE.Color('#002244');
         const renderer = new THREE.WebGLRenderer();
@@ -172,9 +173,9 @@
                     dino.rotation.z = 6.4;
                     dino.position.y = -5;
                     dino.position.x = -1;
-                    dino.position.z = -10;
+                    dino.position.z = -20;
 
-                    dino.scale.set(1, 1, 1); 
+                    dino.scale.set(1.15, 1.15, 1.15); 
 
                     if (gltf.animations.length > 0) {
                         mixer = new THREE.AnimationMixer(dino);
@@ -378,8 +379,8 @@ document.addEventListener('keydown', (event) => {
 
     if (moveInProgress) return;  
 
-    const minX = -31;
-    const maxX = 29;
+    const minX = -15;
+    const maxX = 13;
 
     if (event.key === 'a') {
         
@@ -417,19 +418,21 @@ document.addEventListener('keydown', (event) => {
         }, 10); 
     }
 
-    if (event.key === 'j') {
+    if (event.key === ' ') {
         
         moveInProgress = true;
-
+        if(!isGameStarted){
+            location.reload()
+        }
         setTimeout(() => {
-            dino.position.y += 18;
+            dino.position.y += 25;
             jumping = true;
             if (mixer) {
                 mixer.timeScale = 0; 
             }
 
             setTimeout(() => {
-                dino.position.y -= 18;
+                dino.position.y -= 25;
                 moveInProgress = false;
                 jumping = false; 
                 if (mixer) {
@@ -488,6 +491,13 @@ function checkCollision() {
     });
 }
 
+/*function updateScore(){
+    const score = document.getElementById('score');
+    let scoreNum = document.setTimeout(
+
+    ,100)
+}*/
+
 function gameOver() {
     
     clearInterval(animateEnv);
@@ -503,7 +513,7 @@ function gameOver() {
 
 
         const rest = 0; 
-    let sprint = 0.1; 
+    let sprint = 0.15; 
 
         let animateEnv = null; 
         const startButton = document.getElementById('start-button');
