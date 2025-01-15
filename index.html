@@ -440,9 +440,10 @@ document.addEventListener('keydown', (event) => {
                 }
             }, 250); 
         }, 10); 
+        event.preventDefault(); 
     }
 
-    event.preventDefault(); 
+    
 });
 
  
@@ -471,10 +472,10 @@ function moveEnv() {
 }
 
 
-function checkCollision() {
+function checkCollision( ) {
     obstacles.forEach((obstacle) => {
         const dinoBox = new THREE.Box3().setFromObject(dino); 
-        const scale1 = 0.8;
+        const scale1 = 0.5;
         const center1 = dinoBox.getCenter(new THREE.Vector3());
         const size1 = dinoBox.getSize(new THREE.Vector3()).multiplyScalar(scale1);
         dinoBox.setFromCenterAndSize(center1, size1);
@@ -490,13 +491,12 @@ function checkCollision() {
         }
     });
 }
+const score = document.getElementById('score');
+function updateScore(){
+    
+    
+}
 
-/*function updateScore(){
-    const score = document.getElementById('score');
-    let scoreNum = document.setTimeout(
-
-    ,100)
-}*/
 
 function gameOver() {
     
