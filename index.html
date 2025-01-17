@@ -98,8 +98,9 @@
         <p>
             In this game, you control a T-Rex dinosaur running through the desert. <br>
             Controls:<br>
-            A: Move left<br>
-            D: Move right
+            A/Left arrow: Move left<br>
+            D/Right arrow: Move right<br>
+            Space/Up arrow: Jump
         </p>
 </div>
 
@@ -339,9 +340,7 @@
                 
                 obstacleX = Math.round(Math.random() * (3 - 1) + 1);
                 console.log(obstacleX)
-                /*if(obstacleX == 1){
-                    obstacle.position.x = 29; 
-                }*/
+                
                 if(obstacleX == 1){
                     obstacle.position.x = -1; 
                 }
@@ -351,9 +350,7 @@
                 if(obstacleX == 3){
                     obstacle.position.x = 18; 
                 }
-                /*if(obstacleX == 5){
-                    obstacle.position.x = -31; 
-                }*/
+                
                 obstacle.position.z = Math.random() * (-100 + 1000) - 1000; 
                 obstacle.scale.set(0.25,0.5,0.25);
 
@@ -382,7 +379,7 @@ document.addEventListener('keydown', (event) => {
     const minX = -15;
     const maxX = 13;
 
-    if (event.key === 'a') {
+    if (event.key === 'a' || event.key === 'ArrowLeft') {
         
         dino.rotation.y = 10;
         moveInProgress = true;
@@ -400,7 +397,7 @@ document.addEventListener('keydown', (event) => {
         }, 10); 
     }
 
-    if (event.key === 'd') {
+    if (event.key === 'd'|| event.key === 'ArrowRight') {
         
         dino.rotation.y = 9;
         moveInProgress = true;
@@ -418,7 +415,7 @@ document.addEventListener('keydown', (event) => {
         }, 10); 
     }
 
-    if (event.key === ' ') {
+    if (event.key === ' '|| event.key === 'ArrowUp') {
         
         moveInProgress = true;
         if(!isGameStarted){
