@@ -111,7 +111,53 @@
 </button >
 
     <script type="module">
+    const scoreDiv = document.getElementById('score');
+    scoreDiv.style.position = 'absolute';
+    scoreDiv.style.top = '20px';
+    scoreDiv.style.left = '30px';
+    scoreDiv.style.zIndex = '10';
+    scoreDiv.style.color = 'white';
+    scoreDiv.style.fontFamily = "'roboto', sans-serif";
+    scoreDiv.style.fontSize = '40px';
+    scoreDiv.style.textShadow = '2px 2px 8px #000';
+    scoreDiv.style.pointerEvents = 'none';
+        document.addEventListener('keydown', (event) => {
+            const startButton = document.getElementById('start-button');
+            const infoScreen = document.getElementById('info-screen');
+            const gameOverScreen = document.getElementById('game-over-screen');
+
+            if (!isGameStarted && startButton.style.display === 'block' && (event.key === ' ' || event.key === 'Spacebar')) {
+                startButton.click();
+                event.preventDefault();
+            }
+
+            if (!isGameStarted && gameOverScreen.style.display === 'block' && (event.key === ' ' || event.key === 'Spacebar')) {
+                location.reload();
+                event.preventDefault();
+            }
+        });
+        let score = 0;
+        let scoreInterval = null;
+
+        function updateScore() {
+            if (isGameStarted) {
+                score += 1;
+                document.getElementById('score').textContent = `Score: ${score}`;
+            }
+        }
+
+        scoreInterval = setInterval(updateScore, 100);
+
+        function resetScore() {
+            score = 0;
+            document.getElementById('score').textContent = `Score: ${score}`;
+        }
+
+
+
         
+
+        resetScore();
         import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
         import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
         import { FBXLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/FBXLoader.js";
@@ -445,29 +491,45 @@ document.addEventListener('keydown', (event) => {
 
  
  
-function moveEnv() {
-    
-    hills.forEach((hill) => {
-        hill.position.z += 10; 
-        if (hill.position.z >= 20) { 
-            hill.position.z = Math.random() * (-1000 + 900) -900;
-        }
-    });
+    let speed = 8;
+        let speedIncrement = 0.25;
+        let maxSpeed = 40;
+        let survivalTime = 0;
+        let lastSpeedIncrease = 0;
 
-    bushes.forEach((bush) => {
-        bush.position.z += 10; 
-        if (bush.position.z >= 20) { 
-            bush.position.z = Math.random() * (-1000 + 900) -900;
-        }
-    });
-    obstacles.forEach((obstacle)=>{
-        obstacle.position.z += 10; 
-        if (obstacle.position.z >= 20) { 
-            obstacle.position.z = Math.random() * (-1000 + 900) -900;
-        }
-    })
-}
+        function moveEnv() {
+            hills.forEach((hill) => {
+                hill.position.z += speed;
+                if (hill.position.z >= 20) {
+                    hill.position.z = Math.random() * (-1000 + 900) - 900;
+                }
+            });
 
+            bushes.forEach((bush) => {
+                bush.position.z += speed;
+                if (bush.position.z >= 20) {
+                    bush.position.z = Math.random() * (-1000 + 900) - 900;
+                }
+            });
+            obstacles.forEach((obstacle) => {
+                obstacle.position.z += speed;
+                if (obstacle.position.z >= 20) {
+                    obstacle.position.z = Math.random() * (-1000 + 900) - 900;
+                }
+            });
+        }
+
+        function updateSurvivalTime() {
+            if (isGameStarted) {
+                survivalTime += 0.05;
+                if (survivalTime - lastSpeedIncrease >= 2 && speed < maxSpeed) {
+                    speed += speedIncrement;
+                    lastSpeedIncrease = survivalTime;
+                }
+            }
+        }
+
+        setInterval(updateSurvivalTime, 50);
 
 function checkCollision( ) {
     obstacles.forEach((obstacle) => {
@@ -491,17 +553,15 @@ function checkCollision( ) {
 
 
 function gameOver() {
-    
-    clearInterval(animateEnv);
-
-   
-    isGameStarted = false;
-
-    const gameOverScreen = document.getElementById('game-over-screen');
-    gameOverScreen.style.display = 'block';
-    mixer.timeScale = 0;
-    moveInProgress = false;
-}     
+            clearInterval(animateEnv);
+            clearInterval(scoreInterval);
+            isGameStarted = false;
+            
+            const gameOverScreen = document.getElementById('game-over-screen');
+            gameOverScreen.style.display = 'block';
+            if (mixer) mixer.timeScale = 0;
+            moveInProgress = false;
+        }
 
 
         const rest = 0; 
