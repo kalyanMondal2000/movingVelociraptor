@@ -81,7 +81,50 @@
             font-family: 'jurassic', sans-serif; 
             font-size:50px;
         }
+        .adsbygoogle {
+            position: fixed;
+            top: 0;
+            width: 160px;
+            height: 100vh;
+            z-index: 1000;
+            background: transparent;
+            pointer-events: auto;
+        }
+
+        .adsbygoogle.left {
+            left: 0;
+        }
+
+        .adsbygoogle.right {
+            right: 0;
+        }
+        body {
+            overflow-x: hidden;
+        }
+        #score, #loading-container, #start-button, #info-screen, #game-over-screen {
+            z-index: 1100;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
     </style>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9218904180076022"
+     crossorigin="anonymous"></script>
+
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-9218904180076022"
+     data-ad-slot="3492070137"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
 
 </head>
 
